@@ -133,7 +133,9 @@ trait Pipeline extends BiopetTest with Logging {
   def addConditionalFile(condition: Boolean, path: String*): Unit = {
     if (condition)
       mustHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
-    else mustNotHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
+    else
+      mustNotHaveFiles.append(
+        new File(outputDir, path.mkString(File.separator)))
   }
 
   private var _logLines: List[String] = _
