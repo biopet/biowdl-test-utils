@@ -30,6 +30,7 @@ import org.testng.annotations.{BeforeClass, DataProvider, Test}
 import play.api.libs.json.Json
 import org.apache.commons.io.FileUtils.deleteDirectory
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.io.Source
@@ -52,7 +53,7 @@ trait Pipeline extends BiopetTest with Logging {
     new File(globalOutputDir, this.getClass.getName)
 
   @BeforeClass
-  def runPipeline(): Unit = {
+  def run(): Unit = {
     if (outputDir.exists()) {
       deleteDirectory(outputDir)
     }
@@ -102,9 +103,9 @@ trait Pipeline extends BiopetTest with Logging {
     assert(outputDir.isDirectory)
   }
 
-  private var mustHaveFiles: List[File] = Nil
+  private val mustHaveFiles: ListBuffer[File] = ListBuffer()
   def addMustHaveFile(path: String*): Unit =
-    mustHaveFiles ::= new File(outputDir, path.mkString(File.separator))
+    mustHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
 
   @DataProvider(name = "must_have_files")
   def mustHaveFilesProvider: Array[Array[File]] =
@@ -115,9 +116,9 @@ trait Pipeline extends BiopetTest with Logging {
     file should exist
   }
 
-  private var mustNotHaveFiles: List[File] = Nil
+  private val mustNotHaveFiles: ListBuffer[File] = ListBuffer()
   def addMustNotHaveFile(path: String*): Unit =
-    mustNotHaveFiles ::= new File(outputDir, path.mkString(File.separator))
+    mustNotHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
 
   @DataProvider(name = "must_not_have_files")
   def mustNotHaveFilesProvider: Array[Array[File]] =
@@ -131,8 +132,8 @@ trait Pipeline extends BiopetTest with Logging {
 
   def addConditionalFile(condition: Boolean, path: String*): Unit = {
     if (condition)
-      mustHaveFiles ::= new File(outputDir, path.mkString(File.separator))
-    else mustNotHaveFiles ::= new File(outputDir, path.mkString(File.separator))
+      mustHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
+    else mustNotHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
   }
 
   private var _logLines: List[String] = _
@@ -144,8 +145,8 @@ trait Pipeline extends BiopetTest with Logging {
     _logLines = Source.fromFile(logFile).getLines().toList
   }
 
-  private var logMustHave: List[Regex] = Nil
-  def logMustHave(r: Regex): Unit = logMustHave :+= r
+  private val logMustHave: ListBuffer[Regex] = ListBuffer()
+  def logMustHave(r: Regex): Unit = logMustHave.append(r)
 
   @DataProvider(name = "log_must_have")
   def logMustHaveProvider: Array[Array[Regex]] =
@@ -157,8 +158,8 @@ trait Pipeline extends BiopetTest with Logging {
            s"Logfile does not contains: $r")
   }
 
-  private var logMustNotHave: List[Regex] = Nil
-  def logMustNotHave(r: Regex): Unit = logMustNotHave :+= r
+  private val logMustNotHave: ListBuffer[Regex] = ListBuffer()
+  def logMustNotHave(r: Regex): Unit = logMustNotHave.append(r)
 
   @DataProvider(name = "log_must_not_have")
   def logMustNotHaveProvider: Array[Array[Regex]] =
