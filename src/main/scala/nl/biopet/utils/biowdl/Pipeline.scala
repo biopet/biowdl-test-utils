@@ -29,6 +29,8 @@ import nl.biopet.utils.conversions
 import org.testng.annotations.{BeforeClass, DataProvider, Test}
 import play.api.libs.json.Json
 
+import org.apache.commons.io.FileUtils.deleteDirectory
+
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.io.Source
@@ -49,6 +51,10 @@ trait Pipeline extends BiopetTest {
 
   @BeforeClass
   def runPipeline(): Unit = {
+    if (outputDir.exists()) {
+      deleteDirectory(outputDir)
+    }
+    outputDir.mkdir()
     val inputsFile = Pipeline.writeInputs(outputDir, inputs)
 
     val cmd: Seq[String] = Seq(
