@@ -82,6 +82,12 @@ trait Pipeline extends BiopetTest {
   /** exitvalue of the pipeline, if this is -1 the pipeline is not executed yet */
   def exitValue: Option[Int] = _exitValue
 
+  @Test(priority = -1) def exitcode(): Unit = exitValue shouldBe Some(0)
+  @Test def outputDirExist(): Unit = {
+    assert(outputDir.exists())
+    assert(outputDir.isDirectory)
+  }
+
   private var mustHaveFiles: List[File] = Nil
   def addMustHaveFile(path: String*): Unit =
     mustHaveFiles ::= new File(outputDir, path.mkString(File.separator))
@@ -114,9 +120,6 @@ trait Pipeline extends BiopetTest {
       mustHaveFiles ::= new File(outputDir, path.mkString(File.separator))
     else mustNotHaveFiles ::= new File(outputDir, path.mkString(File.separator))
   }
-
-  @Test(priority = -1) def exitcode(): Unit = exitValue shouldBe 0
-  @Test def outputDirExist(): Unit = assert(outputDir.exists())
 
   private var _logLines: List[String] = _
   def logLines: List[String] = _logLines
