@@ -44,7 +44,7 @@ trait Pipeline extends BiopetTest with Logging {
   def startFile: File
 
   /** This can be overwritten by the pipeline */
-  def inputs: Map[String, String] = Map()
+  def inputs: Map[String, Any] = Map()
 
   def logFile: File = new File(outputDir, "log.out")
 
