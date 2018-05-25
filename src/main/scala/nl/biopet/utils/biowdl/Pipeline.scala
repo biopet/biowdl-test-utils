@@ -25,10 +25,9 @@ import java.io.{File, PrintWriter}
 
 import nl.biopet.utils.io.writeLinesToFile
 import nl.biopet.test.BiopetTest
-import nl.biopet.utils.conversions
+import nl.biopet.utils.{Logging, conversions}
 import org.testng.annotations.{BeforeClass, DataProvider, Test}
 import play.api.libs.json.Json
-
 import org.apache.commons.io.FileUtils.deleteDirectory
 
 import scala.concurrent.duration.Duration
@@ -38,7 +37,10 @@ import scala.sys.process.{Process, ProcessLogger}
 import scala.util.matching.Regex
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait Pipeline extends BiopetTest {
+trait Pipeline extends BiopetTest with Logging {
+
+  /** File to start the pipeline from */
+  def startFile: File
 
   /** This can be overwritten by the pipeline */
   def inputs: Map[String, String] = Map()
@@ -57,14 +59,18 @@ trait Pipeline extends BiopetTest {
     outputDir.mkdir()
     val inputsFile = Pipeline.writeInputs(outputDir, inputs)
 
-    val cmd: Seq[String] = Seq(
-      "java",
-      "-jar",
-      cromwellJar.getAbsolutePath,
-      "run",
-      "-i",
-      inputsFile.getAbsolutePath) ++ cromwellConfig.toList.flatMap(c =>
-      Seq("-c", c.getAbsolutePath))
+    val javaCmd = Seq("java") ++ cromwellConfig
+      .map(c => s"-Dconfig.file=${c.getAbsolutePath}")
+      .toSeq
+
+    val cmd: Seq[String] = javaCmd ++ Seq("-jar",
+                                          cromwellJar.getAbsolutePath,
+                                          "run",
+                                          "-i",
+                                          inputsFile.getAbsolutePath) ++ Seq(
+      startFile.getAbsolutePath)
+
+    logger.info(s"Start command: ${cmd.mkString(" ")}")
 
     if (!outputDir.exists()) outputDir.mkdirs()
     if (logFile.exists()) logFile.delete()
@@ -82,6 +88,7 @@ trait Pipeline extends BiopetTest {
       writer.close()
     }
     Await.result(future, Duration.Inf)
+    logger.info(s"Done command: ${cmd.mkString(" ")}")
   }
 
   private var _exitValue: Option[Int] = None
