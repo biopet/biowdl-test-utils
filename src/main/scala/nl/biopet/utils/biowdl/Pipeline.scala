@@ -84,7 +84,8 @@ trait Pipeline extends BiopetTest with Logging {
       }
 
       val process =
-        Process(cmd, outputDir).run(ProcessLogger(line => writeLine(line)))
+        // startFile.getParentFile -> Run in root directory of WDL pipeline file because of imports issue
+        Process(cmd, cwd = startFile.getParentFile).run(ProcessLogger(line => writeLine(line)))
       _exitValue = Some(process.exitValue())
       writer.close()
     }
@@ -175,7 +176,7 @@ trait Pipeline extends BiopetTest with Logging {
 }
 
 object Pipeline {
-  def writeInputs(outputDir: File, inputs: Map[String, String]): File = {
+  def writeInputs(outputDir: File, inputs: Map[String, Any]): File = {
     val outputFile = new File(outputDir, "inputs.json")
     writeLinesToFile(outputFile,
                      List(Json.stringify(conversions.mapToJson(inputs))))
