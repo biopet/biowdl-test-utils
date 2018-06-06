@@ -61,10 +61,10 @@ package object biowdl {
       .contains("false")
 
   lazy val fixtureDir: File = {
-    val dir = Option(System.getProperties.getProperty("biowdl.fixture_dir"))
+    val dir = Option(System.getProperties.getProperty("biowdl.fixtureDir"))
       .map(new File(_))
       .getOrElse(throw new IllegalArgumentException(
-        "No output_dir found, please set the 'biowdl.fixture_dir' property"))
+        "No output_dir found, please set the 'biowdl.fixtureDir' property"))
     require(dir.exists(), s"Fixture directory does not exist: $dir")
     require(dir.isDirectory, s"Fixture directory is not a directory: $dir")
     dir
