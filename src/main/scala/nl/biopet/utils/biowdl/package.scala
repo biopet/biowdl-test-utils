@@ -46,10 +46,10 @@ package object biowdl {
   }
 
   lazy val globalOutputDir: File = {
-    Option(System.getProperties.getProperty("biowdl.output_dir"))
+    Option(System.getProperties.getProperty("biowdl.outputDir"))
       .map(new File(_))
       .getOrElse(throw new IllegalArgumentException(
-        "No output_dir found, please set the 'biowdl.output_dir' property"))
+        "No output_dir found, please set the 'biowdl.outputDir' property"))
   }
 
   lazy val functionalTests: Boolean =
