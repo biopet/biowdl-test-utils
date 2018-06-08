@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2018 Biopet
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package nl.biopet.utils.biowdl.multisample
 
 import java.io.File
@@ -13,17 +34,19 @@ trait MultisamplePipeline extends Pipeline {
   def sampleDir(sample: Sample): File = sampleDir(sample.name)
   def sampleDir(sample: String) =
     new File(outputDir, "samples" + File.separator + sample)
-  def libraryDir(library: Library): File = libraryDir(library.sample, library.library)
+  def libraryDir(library: Library): File =
+    libraryDir(library.sample, library.library)
   def libraryDir(sample: String, library: String) =
     new File(sampleDir(sample), s"lib_$library")
-  def readgroupDir(readgroup: Readgroup): File = readgroupDir(readgroup.sample, readgroup.library, readgroup.readgroup)
+  def readgroupDir(readgroup: Readgroup): File =
+    readgroupDir(readgroup.sample, readgroup.library, readgroup.readgroup)
   def readgroupDir(sample: String, library: String, readgroup: String) =
     new File(libraryDir(sample, library), s"rg_$readgroup")
 
-  val sampleConfig: Map[String, Any] = samples.map {
+  val sampleConfig: Map[String, Any] = Map("samples" -> samples.map {
     case (name, sample) => name -> sample.toMap
-  }
-  val sampleConfigFile = new File(outputDir, "sample.yml")
+  })
+  val sampleConfigFile = new File(outputDir, "samples.yml")
 
   override def inputs: Map[String, Any] = {
     mapToYamlFile(sampleConfig, sampleConfigFile)
