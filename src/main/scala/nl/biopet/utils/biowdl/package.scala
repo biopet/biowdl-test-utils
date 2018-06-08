@@ -22,6 +22,9 @@
 package nl.biopet.utils
 
 import java.io.File
+import java.util.concurrent.Executors
+
+import scala.concurrent.ExecutionContext
 
 package object biowdl {
   lazy val cromwellJar: File = {
@@ -69,6 +72,15 @@ package object biowdl {
     require(dir.isDirectory, s"Fixture directory is not a directory: $dir")
     dir
   }
+
+  lazy val threads: Int = {
+    Option(System.getProperties.getProperty("biowdl.threads"))
+      .map(_.toInt)
+      .getOrElse(1)
+  }
+
+  implicit lazy val executionContext: ExecutionContext =
+    ExecutionContext.fromExecutor(Executors.newFixedThreadPool(threads))
 
   def fixtureFile(paths: String*): File = {
     val file = new File(fixtureDir, paths.mkString(File.separator))

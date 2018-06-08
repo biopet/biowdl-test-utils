@@ -36,7 +36,6 @@ import scala.concurrent.{Await, Future}
 import scala.io.Source
 import scala.sys.process.{Process, ProcessLogger}
 import scala.util.matching.Regex
-import scala.concurrent.ExecutionContext.Implicits.global
 
 trait Pipeline extends BiopetTest with Logging {
 
@@ -89,7 +88,7 @@ trait Pipeline extends BiopetTest with Logging {
           writeLine(line)))
       _exitValue = Some(process.exitValue())
       writer.close()
-    }
+    }(executionContext)
     Await.result(future, Duration.Inf)
     logger.info(s"Done command: ${cmd.mkString(" ")}")
   }
