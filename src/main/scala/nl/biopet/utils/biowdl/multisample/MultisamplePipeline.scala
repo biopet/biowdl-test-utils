@@ -5,15 +5,18 @@ import java.io.File
 import nl.biopet.utils.biowdl.Pipeline
 import nl.biopet.utils.conversions.mapToYamlFile
 import nl.biopet.utils.conversions.mergeMaps
-import org.testng.annotations.DataProvider
+import org.testng.annotations.{DataProvider, Test}
 
 trait MultisamplePipeline extends Pipeline {
   def samples: Map[String, Sample] = Map()
 
+  def sampleDir(sample: Sample): File = sampleDir(sample.name)
   def sampleDir(sample: String) =
     new File(outputDir, "samples" + File.separator + sample)
+  def libraryDir(library: Library): File = libraryDir(library.sample, library.library)
   def libraryDir(sample: String, library: String) =
     new File(sampleDir(sample), s"lib_$library")
+  def readgroupDir(readgroup: Readgroup): File = readgroupDir(readgroup.sample, readgroup.library, readgroup.readgroup)
   def readgroupDir(sample: String, library: String, readgroup: String) =
     new File(libraryDir(sample, library), s"rg_$readgroup")
 
@@ -42,6 +45,24 @@ trait MultisamplePipeline extends Pipeline {
       .flatMap(sample =>
         sample._2.libraries.flatMap(_._2.readgroups.map(x => Array(x._2))))
       .toArray
+
+  @Test(dataProvider = "samples")
+  def testSampleDir(sample: Sample): Unit = {
+    sampleDir(sample) should exist
+    sampleDir(sample).isDirectory shouldBe true
+  }
+
+  @Test(dataProvider = "libraries")
+  def testLibraryDir(library: Library): Unit = {
+    libraryDir(library) should exist
+    libraryDir(library).isDirectory shouldBe true
+  }
+
+  @Test(dataProvider = "readgroups")
+  def testReadgroupDir(readgroup: Readgroup): Unit = {
+    readgroupDir(readgroup) should exist
+    readgroupDir(readgroup).isDirectory shouldBe true
+  }
 
   def addSample(current: Map[String, Sample],
                 sample: String,
