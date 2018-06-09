@@ -70,8 +70,6 @@ trait Pipeline extends BiopetTest with Logging {
                                           inputsFile.getAbsolutePath) ++ Seq(
       startFile.getAbsolutePath)
 
-    logger.info(s"Start command: ${cmd.mkString(" ")}")
-
     if (!outputDir.exists()) outputDir.mkdirs()
     if (logFile.exists()) logFile.delete()
     val future = Future {
@@ -81,7 +79,7 @@ trait Pipeline extends BiopetTest with Logging {
         writer.println(line)
         writer.flush()
       }
-
+      logger.info(s"Start command: ${cmd.mkString(" ")}")
       val process =
         // startFile.getParentFile -> Run in root directory of WDL pipeline file because of imports issue
         Process(cmd, cwd = startFile.getParentFile).run(ProcessLogger(line =>
