@@ -22,6 +22,9 @@
 package nl.biopet.utils
 
 import java.io.File
+import java.util.concurrent.Executors
+
+import scala.concurrent.ExecutionContext
 
 package object biowdl {
   lazy val cromwellJar: File = {
@@ -46,10 +49,10 @@ package object biowdl {
   }
 
   lazy val globalOutputDir: File = {
-    Option(System.getProperties.getProperty("biowdl.output_dir"))
+    Option(System.getProperties.getProperty("biowdl.outputDir"))
       .map(new File(_))
       .getOrElse(throw new IllegalArgumentException(
-        "No output_dir found, please set the 'biowdl.output_dir' property"))
+        "No output_dir found, please set the 'biowdl.outputDir' property"))
   }
 
   lazy val functionalTests: Boolean =
@@ -61,14 +64,23 @@ package object biowdl {
       .contains("false")
 
   lazy val fixtureDir: File = {
-    val dir = Option(System.getProperties.getProperty("biowdl.fixture_dir"))
+    val dir = Option(System.getProperties.getProperty("biowdl.fixtureDir"))
       .map(new File(_))
       .getOrElse(throw new IllegalArgumentException(
-        "No output_dir found, please set the 'biowdl.fixture_dir' property"))
+        "No output_dir found, please set the 'biowdl.fixtureDir' property"))
     require(dir.exists(), s"Fixture directory does not exist: $dir")
     require(dir.isDirectory, s"Fixture directory is not a directory: $dir")
     dir
   }
+
+  lazy val threads: Int = {
+    Option(System.getProperties.getProperty("biowdl.threads"))
+      .map(_.toInt)
+      .getOrElse(1)
+  }
+
+  implicit lazy val executionContext: ExecutionContext =
+    ExecutionContext.fromExecutor(Executors.newFixedThreadPool(threads))
 
   def fixtureFile(paths: String*): File = {
     val file = new File(fixtureDir, paths.mkString(File.separator))

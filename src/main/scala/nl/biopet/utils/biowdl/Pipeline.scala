@@ -36,7 +36,6 @@ import scala.concurrent.{Await, Future}
 import scala.io.Source
 import scala.sys.process.{Process, ProcessLogger}
 import scala.util.matching.Regex
-import scala.concurrent.ExecutionContext.Implicits.global
 
 trait Pipeline extends BiopetTest with Logging {
 
@@ -44,7 +43,7 @@ trait Pipeline extends BiopetTest with Logging {
   def startFile: File
 
   /** This can be overwritten by the pipeline */
-  def inputs: Map[String, String] = Map()
+  def inputs: Map[String, Any] = Map()
 
   def logFile: File = new File(outputDir, "log.out")
 
@@ -71,8 +70,6 @@ trait Pipeline extends BiopetTest with Logging {
                                           inputsFile.getAbsolutePath) ++ Seq(
       startFile.getAbsolutePath)
 
-    logger.info(s"Start command: ${cmd.mkString(" ")}")
-
     if (!outputDir.exists()) outputDir.mkdirs()
     if (logFile.exists()) logFile.delete()
     val future = Future {
@@ -82,12 +79,14 @@ trait Pipeline extends BiopetTest with Logging {
         writer.println(line)
         writer.flush()
       }
-
+      logger.info(s"Start command: ${cmd.mkString(" ")}")
       val process =
-        Process(cmd, outputDir).run(ProcessLogger(line => writeLine(line)))
+        // startFile.getParentFile -> Run in root directory of WDL pipeline file because of imports issue
+        Process(cmd, cwd = startFile.getParentFile).run(ProcessLogger(line =>
+          writeLine(line)))
       _exitValue = Some(process.exitValue())
       writer.close()
-    }
+    }(executionContext)
     Await.result(future, Duration.Inf)
     logger.info(s"Done command: ${cmd.mkString(" ")}")
   }
@@ -175,7 +174,7 @@ trait Pipeline extends BiopetTest with Logging {
 }
 
 object Pipeline {
-  def writeInputs(outputDir: File, inputs: Map[String, String]): File = {
+  def writeInputs(outputDir: File, inputs: Map[String, Any]): File = {
     val outputFile = new File(outputDir, "inputs.json")
     writeLinesToFile(outputFile,
                      List(Json.stringify(conversions.mapToJson(inputs))))
