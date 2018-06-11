@@ -46,7 +46,7 @@ trait MultisamplePipeline extends Pipeline {
   val sampleConfig: Map[String, Any] = Map("samples" -> samples.map {
     case (name, sample) => name -> sample.toMap
   })
-  val sampleConfigFile = new File(outputDir, "samples.yml")
+  def sampleConfigFile = new File(outputDir, "samples.yml")
 
   override def inputs: Map[String, Any] = {
     mapToYamlFile(sampleConfig, sampleConfigFile)

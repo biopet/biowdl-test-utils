@@ -51,7 +51,7 @@ trait Pipeline extends BiopetTest with Logging {
   def logFile: File = new File(outputDir, "log.out")
 
   /** Output dir of pipeline */
-  lazy val outputDir =
+  def outputDir =
     new File(globalOutputDir, this.getClass.getName)
 
   @BeforeClass
