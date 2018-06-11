@@ -108,6 +108,7 @@ trait Pipeline extends BiopetTest with Logging {
   private val mustHaveFiles: ListBuffer[File] = ListBuffer()
   def addMustHaveFile(path: String*): Unit =
     mustHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
+  def addMustHaveFile(file: File): Unit = mustHaveFiles.append(file)
 
   @DataProvider(name = "must_have_files")
   def mustHaveFilesProvider: Array[Array[File]] =
@@ -121,6 +122,7 @@ trait Pipeline extends BiopetTest with Logging {
   private val mustNotHaveFiles: ListBuffer[File] = ListBuffer()
   def addMustNotHaveFile(path: String*): Unit =
     mustNotHaveFiles.append(new File(outputDir, path.mkString(File.separator)))
+  def addMustNotHaveFile(file: File): Unit = mustNotHaveFiles.append(file)
 
   @DataProvider(name = "must_not_have_files")
   def mustNotHaveFilesProvider: Array[Array[File]] =
