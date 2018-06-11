@@ -119,7 +119,7 @@ trait MultisamplePipeline extends Pipeline {
     val s = withLibrary(sample)
     val l = s.libraries(library)
     val rg = l.readgroups.get(readgroup) match {
-      case Some(r) => r.copy(config = mergeMaps(l.config, config))
+      case Some(r) => r.copy(config = mergeMaps(r.config, config))
       case _       => Readgroup(sample, library, readgroup, config)
     }
     withLibrary + (sample -> s.copy(
