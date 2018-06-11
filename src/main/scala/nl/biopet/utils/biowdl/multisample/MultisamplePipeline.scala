@@ -50,7 +50,7 @@ trait MultisamplePipeline extends Pipeline {
 
   override def inputs: Map[String, Any] = {
     mapToYamlFile(sampleConfig, sampleConfigFile)
-    super.inputs + ("pipeline.sampleConfigs" -> Array(
+    super.inputs + (s"$startPipelineName.sampleConfigFiles" -> Array(
       sampleConfigFile.getAbsolutePath))
   }
 

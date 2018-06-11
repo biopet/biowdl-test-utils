@@ -42,6 +42,9 @@ trait Pipeline extends BiopetTest with Logging {
   /** File to start the pipeline from */
   def startFile: File
 
+  /** Name of the pipeline inside the wdl file, will be used for configs */
+  def startPipelineName: String = startFile.getName.stripSuffix(".wdl")
+
   /** This can be overwritten by the pipeline */
   def inputs: Map[String, Any] = Map()
 
