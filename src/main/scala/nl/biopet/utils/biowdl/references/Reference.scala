@@ -9,6 +9,15 @@ trait Reference {
 
   def referenceFasta: File
 
+  def referenceFastaIndexFile =
+    new File(referenceFasta.getAbsolutePath + ".fai")
+  def referenceFastaDictFile =
+    new File(
+      referenceFasta.getAbsolutePath
+        .stripSuffix(".fa")
+        .stripSuffix(".fna")
+        .stripSuffix(".fasta") + ".dict")
+
   def bwaMemFasta: Option[File] = None
 
   def bowtieIndex: Option[File] = None
