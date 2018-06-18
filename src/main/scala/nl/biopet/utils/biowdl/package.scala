@@ -80,7 +80,9 @@ package object biowdl {
   }
 
   implicit lazy val executionContext: ExecutionContext =
-    ExecutionContext.fromExecutor(Executors.newFixedThreadPool(threads))
+    ExecutionContext.fromExecutor(
+      ExecutionContext.fromExecutorService(
+        Executors.newWorkStealingPool(threads)))
 
   def fixtureFile(paths: String*): File = {
     val file = new File(fixtureDir, paths.mkString(File.separator))
