@@ -40,6 +40,16 @@ trait Reference {
         .stripSuffix(".fasta") + ".dict")
 
   def bwaMemFasta: Option[File] = None
+  def bwaMemIndexFiles: List[File] =
+    bwaMemFasta.toList.flatMap(
+      x =>
+        List(
+          new File(x.getAbsolutePath + ".sa"),
+          new File(x.getAbsolutePath + ".amb"),
+          new File(x.getAbsolutePath + ".ann"),
+          new File(x.getAbsolutePath + ".bwt"),
+          new File(x.getAbsolutePath + ".pac")
+      ))
 
   def bowtieIndex: Option[File] = None
   def bowtie2Index: Option[File] = None
