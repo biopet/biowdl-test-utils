@@ -58,7 +58,4 @@ trait Reference {
   def gsnapDb: Option[String] = None
   def starGenomeDir: Option[File] = None
   def hisat2Index: Option[String] = None
-
-  def referenceGtf: Option[File] = None
-  def referenceRefflat: Option[File] = None
 }

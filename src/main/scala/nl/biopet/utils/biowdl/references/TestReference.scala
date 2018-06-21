@@ -52,9 +52,4 @@ trait TestReference extends Reference {
 
   override def hisat2Index: Option[String] =
     Some(fixtureDir + "reference/hisat2/reference")
-
-  override def referenceGtf: Option[File] =
-    Some(fixtureFile("reference/reference.gtf"))
-  override def referenceRefflat: Option[File] =
-    Some(fixtureFile("reference/reference.refflat"))
 }
