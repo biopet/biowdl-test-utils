@@ -26,8 +26,7 @@ import java.io.File
 import nl.biopet.utils.biowdl.fixtureFile
 
 trait TestAnnotation extends Annotation {
-  override def referenceGtf: Option[File] =
-    Some(fixtureFile("reference/reference.gtf"))
-  override def referenceRefflat: Option[File] =
+  def referenceGtf: Option[File] = Some(fixtureFile("reference/reference.gtf"))
+  def referenceRefflat: Option[File] =
     Some(fixtureFile("reference/reference.refflat"))
 }
