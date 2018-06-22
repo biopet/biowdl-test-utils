@@ -16,7 +16,11 @@ developers ++= List(
   Developer(id = "rhpvorderman",
             name = "Ruben Vorderman",
             email = "r.h.p.vorderman@lumc.nl",
-            url = url("https://github.com/rhpvorderman"))
+            url = url("https://github.com/rhpvorderman")),
+  Developer(id = "DavyCats",
+            name = "Davy Cats",
+            email = "d.cats@lumc.nl",
+            url = url("https://github.com/DavyCats"))
 )
 
 crossScalaVersions := Seq("2.11.12", "2.12.5")

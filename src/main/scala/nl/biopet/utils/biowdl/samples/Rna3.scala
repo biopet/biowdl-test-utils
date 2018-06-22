@@ -19,43 +19,27 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package nl.biopet.utils.biowdl.references
+package nl.biopet.utils.biowdl.samples
 
-import java.io.File
+import nl.biopet.utils.biowdl.fixtureFile
+import nl.biopet.utils.biowdl.multisample.{MultisamplePipeline, Sample}
 
-trait Reference {
-  def referenceSpecies: String
+trait Rna3SingleEnd extends MultisamplePipeline {
+  override def samples: Map[String, Sample] =
+    addReadgroup(super.samples,
+                 "rna3",
+                 "lib1",
+                 "rg1",
+                 Map("R1" -> fixtureFile("samples", "rna3", "R1.fq.gz"),
+                     "R1_md5" -> "2e53e727dad4cbbfedadeb29404ca0d3"))
+}
 
-  def referenceName: String
-
-  def referenceFasta: File
-
-  def referenceFastaIndexFile =
-    new File(referenceFasta.getAbsolutePath + ".fai")
-  def referenceFastaDictFile =
-    new File(
-      referenceFasta.getAbsolutePath
-        .stripSuffix(".fa")
-        .stripSuffix(".fna")
-        .stripSuffix(".fasta") + ".dict")
-
-  def bwaMemFasta: Option[File] = None
-  def bwaMemIndexFiles: List[File] =
-    bwaMemFasta.toList.flatMap(
-      x =>
-        List(
-          new File(x.getAbsolutePath + ".sa"),
-          new File(x.getAbsolutePath + ".amb"),
-          new File(x.getAbsolutePath + ".ann"),
-          new File(x.getAbsolutePath + ".bwt"),
-          new File(x.getAbsolutePath + ".pac")
-      ))
-
-  def bowtieIndex: Option[File] = None
-  def bowtie2Index: Option[File] = None
-  def tophatIndex: Option[String] = None
-  def gsnapDir: Option[File] = None
-  def gsnapDb: Option[String] = None
-  def starGenomeDir: Option[File] = None
-  def hisat2Index: Option[String] = None
+trait Rna3PairedEnd extends Rna3SingleEnd {
+  override def samples: Map[String, Sample] =
+    addReadgroup(super.samples,
+                 "rna3",
+                 "lib1",
+                 "rg1",
+                 Map("R2" -> fixtureFile("samples", "rna3", "R2.fq.gz"),
+                     "R2_md5" -> "f3e4227bb7ab4028f4f146b2f1ebe182"))
 }

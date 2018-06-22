@@ -19,43 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package nl.biopet.utils.biowdl.references
+package nl.biopet.utils.biowdl.annotations
 
 import java.io.File
 
-trait Reference {
-  def referenceSpecies: String
+import nl.biopet.utils.biowdl.fixtureFile
+import nl.biopet.utils.biowdl.references.TestReference
 
-  def referenceName: String
-
-  def referenceFasta: File
-
-  def referenceFastaIndexFile =
-    new File(referenceFasta.getAbsolutePath + ".fai")
-  def referenceFastaDictFile =
-    new File(
-      referenceFasta.getAbsolutePath
-        .stripSuffix(".fa")
-        .stripSuffix(".fna")
-        .stripSuffix(".fasta") + ".dict")
-
-  def bwaMemFasta: Option[File] = None
-  def bwaMemIndexFiles: List[File] =
-    bwaMemFasta.toList.flatMap(
-      x =>
-        List(
-          new File(x.getAbsolutePath + ".sa"),
-          new File(x.getAbsolutePath + ".amb"),
-          new File(x.getAbsolutePath + ".ann"),
-          new File(x.getAbsolutePath + ".bwt"),
-          new File(x.getAbsolutePath + ".pac")
-      ))
-
-  def bowtieIndex: Option[File] = None
-  def bowtie2Index: Option[File] = None
-  def tophatIndex: Option[String] = None
-  def gsnapDir: Option[File] = None
-  def gsnapDb: Option[String] = None
-  def starGenomeDir: Option[File] = None
-  def hisat2Index: Option[String] = None
+trait TestAnnotation extends Annotation with TestReference {
+  def referenceGtf: Option[File] = Some(fixtureFile("reference/reference.gtf"))
+  def referenceRefflat: Option[File] =
+    Some(fixtureFile("reference/reference.refflat"))
 }
