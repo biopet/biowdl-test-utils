@@ -34,7 +34,7 @@ trait Wgs1SingleEnd extends MultisamplePipeline {
                      "R1_md5" -> "b859d6dd76a6861ce7e9a978ae2e530e"))
 }
 
-trait Wgs1PairedEnd extends ChIP1SingleEnd {
+trait Wgs1PairedEnd extends Wgs1SingleEnd {
   override def samples: Map[String, Sample] =
     addReadgroup(super.samples,
                  "wgs1",

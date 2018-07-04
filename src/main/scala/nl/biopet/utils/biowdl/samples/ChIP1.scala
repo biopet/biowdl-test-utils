@@ -24,7 +24,7 @@ package nl.biopet.utils.biowdl.samples
 import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.multisample.{MultisamplePipeline, Sample}
 
-trait ChIP1SingleEnd extends MultisamplePipeline {
+trait Chip1SingleEnd extends MultisamplePipeline {
   override def samples: Map[String, Sample] =
     addReadgroup(super.samples,
                  "ChIP1",
@@ -34,7 +34,7 @@ trait ChIP1SingleEnd extends MultisamplePipeline {
                      "R1_md5" -> "d538c6e674b7152cf201a10dd75f08e8"))
 }
 
-trait Wgs1PairedEnd extends ChIP1SingleEnd {
+trait Chip1PairedEnd extends Chip1SingleEnd {
   override def samples: Map[String, Sample] =
     addReadgroup(super.samples,
                  "ChIP1",
