@@ -24,22 +24,22 @@ package nl.biopet.utils.biowdl.samples
 import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.multisample.{MultisamplePipeline, Sample}
 
-trait Wgs1SingleEnd extends MultisamplePipeline {
+trait ChIP1SingleEnd extends MultisamplePipeline {
   override def samples: Map[String, Sample] =
     addReadgroup(super.samples,
-                 "wgs1",
+                 "ChIP1",
                  "lib1",
                  "rg1",
-                 Map("R1" -> fixtureFile("samples", "wgs1", "R1.fq.gz"),
-                     "R1_md5" -> "b859d6dd76a6861ce7e9a978ae2e530e"))
+                 Map("R1" -> fixtureFile("samples", "chip1", "sample1_R1.fastq.gz"),
+                     "R1_md5" -> "d538c6e674b7152cf201a10dd75f08e8"))
 }
 
 trait Wgs1PairedEnd extends ChIP1SingleEnd {
   override def samples: Map[String, Sample] =
     addReadgroup(super.samples,
-                 "wgs1",
+                 "ChIP1",
                  "lib1",
                  "rg1",
-                 Map("R2" -> fixtureFile("samples", "wgs1", "R2.fq.gz"),
-                     "R2_md5" -> "986acc7bda0bf2ef55c52431f54fe3a9"))
+                 Map("R2" -> fixtureFile("samples", "chip1", "sample1_R2.fastq.gz"),
+                     "R2_md5" -> "9b662817e93a625642e312f595c1d7e0"))
 }
