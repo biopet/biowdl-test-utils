@@ -66,9 +66,13 @@ trait Pipeline extends BiopetTest with Logging {
       .map(c => s"-Dconfig.file=${c.getAbsolutePath}")
       .toSeq
 
+    def cromwellDir = new File(outputDir, ".cromwell")
+
     val cmd: Seq[String] = javaCmd ++ Seq("-jar",
                                           cromwellJar.getAbsolutePath,
                                           "run",
+                                          "--workflow-root",
+                                          cromwellDir.getAbsolutePath,
                                           "-i",
                                           inputsFile.getAbsolutePath) ++ Seq(
       startFile.getAbsolutePath)
