@@ -32,7 +32,8 @@ trait Chip2SingleEnd extends MultisamplePipeline {
       "lib1",
       "rg1",
       Map("R1" -> fixtureFile("samples", "chip2", "sample2_R1.fastq.gz"),
-          "R1_md5" -> "cf07fa018c049a0ca97f91f0e5b958a2"))
+          "R1_md5" -> "cf07fa018c049a0ca97f91f0e5b958a2")
+    )
 }
 
 trait Chip2PairedEnd extends Chip2SingleEnd {
@@ -43,5 +44,30 @@ trait Chip2PairedEnd extends Chip2SingleEnd {
       "lib1",
       "rg1",
       Map("R2" -> fixtureFile("samples", "chip2", "sample2_R2.fastq.gz"),
-          "R2_md5" -> "74d30ded0d64bcb60ccbff3a390453b4"))
+          "R2_md5" -> "74d30ded0d64bcb60ccbff3a390453b4")
+    )
+}
+
+trait Control2SingleEnd extends MultisamplePipeline {
+  override def samples: Map[String, Sample] =
+    addReadgroup(
+      super.samples,
+      "Control2",
+      "lib1",
+      "rg1",
+      Map("R1" -> fixtureFile("samples", "chip2", "sampleCon_R1.fastq.gz"),
+          "R1_md5" -> "8e475aa9239be5188f4850e989765dc3")
+    )
+}
+
+trait Control2PairedEnd extends MultisamplePipeline {
+  override def samples: Map[String, Sample] =
+    addReadgroup(
+      super.samples,
+      "Control2",
+      "lib1",
+      "rg1",
+      Map("R2" -> fixtureFile("samples", "chip2", "sampleCon_R2.fastq.gz"),
+        "R2_md5" -> "a51c245c4e8790695d5299728e07360e")
+    )
 }
