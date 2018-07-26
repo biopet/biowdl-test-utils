@@ -68,6 +68,6 @@ trait Control2PairedEnd extends Control2SingleEnd {
       "lib1",
       "rg1",
       Map("R2" -> fixtureFile("samples", "chip2", "sampleCon_R2.fastq.gz"),
-        "R2_md5" -> "a51c245c4e8790695d5299728e07360e")
+          "R2_md5" -> "a51c245c4e8790695d5299728e07360e")
     )
 }
