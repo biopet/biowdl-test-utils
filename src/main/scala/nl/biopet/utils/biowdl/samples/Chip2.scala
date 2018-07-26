@@ -60,7 +60,7 @@ trait Control2SingleEnd extends MultisamplePipeline {
     )
 }
 
-trait Control2PairedEnd extends MultisamplePipeline {
+trait Control2PairedEnd extends Control2SingleEnd {
   override def samples: Map[String, Sample] =
     addReadgroup(
       super.samples,
