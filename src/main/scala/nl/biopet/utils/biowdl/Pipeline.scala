@@ -62,7 +62,7 @@ trait Pipeline extends BiopetTest with Logging {
     outputDir.mkdir()
     val inputsFile = Pipeline.writeInputs(outputDir, inputs)
 
-    val javaCmd = Seq("java") ++ cromwellConfig
+    val javaCmd = Seq("java", "-DLOG_MODE=standard") ++ cromwellConfig
       .map(c => s"-Dconfig.file=${c.getAbsolutePath}")
       .toSeq
 
