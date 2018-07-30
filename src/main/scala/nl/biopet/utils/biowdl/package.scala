@@ -44,6 +44,12 @@ package object biowdl {
     file
   }
 
+  lazy val cromwellExtraOptions: Seq[String] = {
+    val extraOptions = Option(
+      System.getProperties.getProperty("cromwell.extraOptions"))
+    extraOptions.map(_.split(",").toSeq).getOrElse(Seq[String]())
+  }
+
   lazy val speciesDir: Option[File] = {
     Option(System.getProperties.getProperty("species.dir")).map(new File(_))
   }
