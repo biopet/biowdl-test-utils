@@ -44,8 +44,9 @@ package object biowdl {
     file
   }
 
-  lazy val cromwellConfigExtraOptions: Seq[String] = {
-    val extraOptions = Option(System.getProperties.getProperty("cromwell.config.extra_options"))
+  lazy val cromwellExtraOptions: Seq[String] = {
+    val extraOptions = Option(
+      System.getProperties.getProperty("cromwell.extraOptions"))
     extraOptions.map(_.split(",").toSeq).getOrElse(Seq[String]())
   }
 
