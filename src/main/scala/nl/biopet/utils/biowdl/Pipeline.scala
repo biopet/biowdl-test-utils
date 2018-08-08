@@ -66,7 +66,8 @@ trait Pipeline extends BiopetTest with Logging {
 
     val zippedFile = if (createImportsZip) {
       val files =
-        listDirectory(new File("."), Some(".*.wdl".r), recursive = true)
+        listDirectory(new File("."), recursive = true)
+          .filter(_.getName.endsWith(".wdl"))
       val zipFile = new File(outputDir, "imports.zip")
       val zipCmd = Seq("zip", zipFile.toString) ++ files.map(_.toString)
       val p = Process(zipCmd, cwd = startFile.getParentFile).run()
