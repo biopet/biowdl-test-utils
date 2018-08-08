@@ -62,7 +62,7 @@ trait Pipeline extends BiopetTest with Logging {
     if (outputDir.exists()) {
       deleteDirectory(outputDir)
     }
-    outputDir.mkdir()
+    outputDir.mkdirs()
 
     val zippedFile = if (createImportsZip) {
       val files =
