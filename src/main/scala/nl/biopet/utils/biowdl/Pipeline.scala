@@ -55,6 +55,8 @@ trait Pipeline extends BiopetTest with Logging {
   def outputDir =
     new File(globalOutputDir, this.getClass.getName)
 
+  def createImportsZip: Boolean = zipped
+
   @BeforeClass
   def run(): Unit = {
     if (outputDir.exists()) {
@@ -62,7 +64,7 @@ trait Pipeline extends BiopetTest with Logging {
     }
     outputDir.mkdir()
 
-    val zippedFile = if (zipped) {
+    val zippedFile = if (createImportsZip) {
       val files =
         listDirectory(new File("."), Some(".*.wdl".r), recursive = true)
       val zipFile = new File(outputDir, "imports.zip")
