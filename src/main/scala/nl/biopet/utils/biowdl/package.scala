@@ -79,6 +79,9 @@ package object biowdl {
     dir
   }
 
+  lazy val zipped: Boolean =
+    Option(System.getProperties.getProperty("biowdl.zipped")).contains("true")
+
   lazy val threads: Int = {
     Option(System.getProperties.getProperty("biowdl.threads"))
       .map(_.toInt)
