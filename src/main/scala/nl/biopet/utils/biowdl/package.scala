@@ -81,7 +81,7 @@ package object biowdl {
 
   lazy val zipped: Boolean =
     Option(System.getProperties.getProperty("biowdl.zipped"))
-      .forall(_ == "true")
+      .exists(_ != "false")
 
   lazy val threads: Int = {
     Option(System.getProperties.getProperty("biowdl.threads"))
