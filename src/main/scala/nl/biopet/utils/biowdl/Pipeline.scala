@@ -24,6 +24,7 @@ package nl.biopet.utils.biowdl
 import java.io.{File, PrintWriter}
 
 import nl.biopet.utils.io.writeLinesToFile
+import nl.biopet.utils.io.listDirectory
 import nl.biopet.test.BiopetTest
 import nl.biopet.utils.{Logging, conversions}
 import org.testng.annotations.{BeforeClass, DataProvider, Test}
@@ -54,12 +55,26 @@ trait Pipeline extends BiopetTest with Logging {
   def outputDir =
     new File(globalOutputDir, this.getClass.getName)
 
+  def createImportsZip: Boolean = zipped
+
   @BeforeClass
   def run(): Unit = {
     if (outputDir.exists()) {
       deleteDirectory(outputDir)
     }
-    outputDir.mkdir()
+    outputDir.mkdirs()
+
+    val zippedFile = if (createImportsZip) {
+      val files =
+        listDirectory(new File("."), recursive = true)
+          .filter(_.getName.endsWith(".wdl"))
+      val zipFile = new File(outputDir, "imports.zip")
+      val zipCmd = Seq("zip", zipFile.toString) ++ files.map(_.toString)
+      val p = Process(zipCmd, cwd = startFile.getParentFile).run()
+      require(p.exitValue() == 0)
+      Some(zipFile)
+    } else None
+
     val inputsFile = Pipeline.writeInputs(outputDir, inputs)
 
     val javaCmd = Seq("java", "-DLOG_MODE=standard") ++
@@ -72,8 +87,9 @@ trait Pipeline extends BiopetTest with Logging {
                                           cromwellJar.getAbsolutePath,
                                           "run",
                                           "-i",
-                                          inputsFile.getAbsolutePath) ++ Seq(
-      startFile.getAbsolutePath)
+                                          inputsFile.getAbsolutePath) ++
+      zippedFile.toSeq.flatMap(x => List("--imports", x.getAbsolutePath)) ++
+      Seq(startFile.getAbsolutePath)
 
     if (!outputDir.exists()) outputDir.mkdirs()
     if (logFile.exists()) logFile.delete()
