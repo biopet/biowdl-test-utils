@@ -40,6 +40,7 @@ trait Reference {
         .stripSuffix(".fasta") + ".dict")
 
   def bwaMemFasta: Option[File] = None
+  def bwaMemAlt: Option[File] = None
   def bwaMemIndexFiles: List[File] =
     bwaMemFasta.toList.flatMap(
       x =>

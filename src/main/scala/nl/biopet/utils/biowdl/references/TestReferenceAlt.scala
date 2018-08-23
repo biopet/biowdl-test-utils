@@ -35,4 +35,6 @@ trait TestReferenceAlt extends Reference {
 
   override def bwaMemFasta =
     Some(fixtureFile("reference_alt/bwa/reference.fasta"))
+  override def bwaMemAlt =
+    Some(fixtureFile("reference_alt/bwa/reference.fasta.alt"))
 }
