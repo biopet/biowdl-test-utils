@@ -26,7 +26,44 @@ import java.io.File
 import nl.biopet.test.BiopetTest
 import org.testng.annotations.Test
 
+import scala.util.matching.Regex
+
 class PipelineTest extends BiopetTest {
+
+  @Test
+  def testLogMustHave(): Unit = {
+    val outDir = File.createTempFile("test.", ".yml")
+    outDir.delete()
+    outDir.mkdir()
+
+    val r: Regex = ".*".r
+
+    val pipeline = new Pipeline {
+      override def startFile: File = new File(".")
+      logMustHave(r)
+      override def outputDir: File = outDir
+    }
+
+    pipeline.logMustHaveProvider shouldBe Array(Array(r))
+  }
+
+  @Test
+  def testLogMustNotHave(): Unit = {
+    val outDir = File.createTempFile("test.", ".yml")
+    outDir.delete()
+    outDir.mkdir()
+
+    val r: Regex = ".*".r
+
+    val pipeline = new Pipeline {
+      override def startFile: File = new File(".")
+      logMustNotHave(r)
+      override def outputDir: File = outDir
+    }
+
+    pipeline.logMustNotHaveProvider shouldBe Array(Array(r))
+  }
+
   @Test
   def testCreateFile(): Unit = {
     val outDir = File.createTempFile("test.", ".yml")
