@@ -194,6 +194,31 @@ trait Pipeline extends BiopetTest with Logging {
     val i = logLines.indexWhere(r.findFirstMatchIn(_).isDefined)
     assert(i == -1, s"at line number ${i + 1} in logfile does contains: $r")
   }
+
+  /**
+    * Create a optional file object and calls `addConditionalFile` directly, even if the condition is false
+    * @param condition Condition for the file to be created, if false None is returned
+    * @param path Path to the file
+    * @return
+    */
+  def createOptionalFile(condition: Boolean, path: String*): Option[File] = {
+    val p = path.mkString(File.separator)
+    addConditionalFile(condition, p)
+    if (condition) Some(new File(outputDir, p))
+    else None
+  }
+
+  /**
+    * Create a file object and calls `addMustHaveFile` directly
+    * @param path Path to the file
+    * @return
+    */
+  def createFile(path: String*): File = {
+    val p = path.mkString(File.separator)
+    addMustHaveFile(p)
+    new File(outputDir, p)
+  }
+
 }
 
 object Pipeline {
