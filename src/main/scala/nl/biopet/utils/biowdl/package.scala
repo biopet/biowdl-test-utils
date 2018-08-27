@@ -27,7 +27,7 @@ import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
 
 package object biowdl {
-  lazy val cromwellJar: File = {
+  def cromwellJar: File = {
     val file = Option(System.getProperties.getProperty("cromwell.jar"))
       .map(new File(_))
       .getOrElse(throw new IllegalArgumentException(
@@ -36,40 +36,56 @@ package object biowdl {
     file
   }
 
-  lazy val cromwellConfig: Option[File] = {
+  def cromwellConfig: Option[File] = {
     val file = Option(System.getProperties.getProperty("cromwell.config"))
       .map(new File(_))
-    file.foreach(f =>
-      require(f.exists(), s"Cromwell config '$file' does not exist"))
+    file.foreach(
+      f =>
+        require(f.exists(),
+                s"Cromwell config '${file.getOrElse("")}' does not exist"))
     file
   }
 
-  lazy val cromwellExtraOptions: Seq[String] = {
+  def cromwellExtraOptions: Seq[String] = {
     val extraOptions = Option(
       System.getProperties.getProperty("cromwell.extraOptions"))
     extraOptions.map(_.split(",").toSeq).getOrElse(Seq[String]())
   }
 
-  lazy val speciesDir: Option[File] = {
-    Option(System.getProperties.getProperty("species.dir")).map(new File(_))
+  def speciesDir: Option[File] = {
+    Option(System.getProperties.getProperty("biowdl.species.dir"))
+      .map(new File(_))
   }
 
-  lazy val globalOutputDir: File = {
+  def globalOutputDir: File = {
     Option(System.getProperties.getProperty("biowdl.outputDir"))
       .map(new File(_))
       .getOrElse(throw new IllegalArgumentException(
         "No output_dir found, please set the 'biowdl.outputDir' property"))
   }
 
-  lazy val functionalTests: Boolean =
-    Option(System.getProperties.getProperty("biowdl.functionalTests"))
-      .exists(_ != "false")
+  def functionalTests: Boolean = {
+    Option(System.getProperties.getProperty("biowdl.functionalTests")) match {
+      case Some("false") => false
+      case Some("true")  => true
+      case Some(x) =>
+        throw new IllegalArgumentException(
+          s"for 'biowdl.functionalTests' only true or false is allowed, found: $x")
+      case _ => false
+    }
+  }
 
-  lazy val integrationTests: Boolean =
-    !Option(System.getProperties.getProperty("biowdl.integrationTests"))
-      .contains("false")
+  def integrationTests: Boolean =
+    Option(System.getProperties.getProperty("biowdl.integrationTests")) match {
+      case Some("false") => false
+      case Some("true")  => true
+      case Some(x) =>
+        throw new IllegalArgumentException(
+          s"for 'biowdl.integrationTests' only true or false is allowed, found: $x")
+      case _ => true
+    }
 
-  lazy val fixtureDir: File = {
+  def fixtureDir: File = {
     val dir = Option(System.getProperties.getProperty("biowdl.fixtureDir"))
       .map(new File(_))
       .getOrElse(throw new IllegalArgumentException(
@@ -79,17 +95,23 @@ package object biowdl {
     dir
   }
 
-  lazy val zipped: Boolean =
-    Option(System.getProperties.getProperty("biowdl.zipped"))
-      .exists(_ != "false")
+  def zipped: Boolean =
+    Option(System.getProperties.getProperty("biowdl.zipped")) match {
+      case Some("false") => false
+      case Some("true")  => true
+      case Some(x) =>
+        throw new IllegalArgumentException(
+          s"for 'biowdl.zipped' only true or false is allowed, found: $x")
+      case _ => false
+    }
 
-  lazy val threads: Int = {
+  def threads: Int = {
     Option(System.getProperties.getProperty("biowdl.threads"))
       .map(_.toInt)
       .getOrElse(1)
   }
 
-  implicit lazy val executionContext: ExecutionContext =
+  implicit val executionContext: ExecutionContext =
     ExecutionContext.fromExecutor(
       ExecutionContext.fromExecutorService(
         Executors.newWorkStealingPool(threads)))
