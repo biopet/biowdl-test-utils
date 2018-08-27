@@ -21,10 +21,85 @@
 
 package nl.biopet.utils.biowdl
 
+import java.io.File
+
 import nl.biopet.test.BiopetTest
 import org.testng.annotations.Test
 
+import scala.util.matching.Regex
+
 class PipelineTest extends BiopetTest {
+
   @Test
-  def testDummy(): Unit = {}
+  def testLogMustHave(): Unit = {
+    val outDir = File.createTempFile("test.", ".yml")
+    outDir.delete()
+    outDir.mkdir()
+
+    val r: Regex = ".*".r
+
+    val pipeline = new Pipeline {
+      override def startFile: File = new File(".")
+      logMustHave(r)
+      override def outputDir: File = outDir
+    }
+
+    pipeline.logMustHaveProvider shouldBe Array(Array(r))
+  }
+
+  @Test
+  def testLogMustNotHave(): Unit = {
+    val outDir = File.createTempFile("test.", ".yml")
+    outDir.delete()
+    outDir.mkdir()
+
+    val r: Regex = ".*".r
+
+    val pipeline = new Pipeline {
+      override def startFile: File = new File(".")
+      logMustNotHave(r)
+      override def outputDir: File = outDir
+    }
+
+    pipeline.logMustNotHaveProvider shouldBe Array(Array(r))
+  }
+
+  @Test
+  def testCreateFile(): Unit = {
+    val outDir = File.createTempFile("test.", ".yml")
+    outDir.delete()
+    outDir.mkdir()
+
+    val pipeline = new Pipeline {
+      override def startFile: File = new File(".")
+      val file = createFile("bla")
+      override def outputDir: File = outDir
+    }
+
+    pipeline.file shouldBe new File(pipeline.outputDir, "bla")
+    pipeline.mustHaveFilesProvider shouldBe Array(
+      Array(new File(pipeline.outputDir, "bla")))
+  }
+
+  @Test
+  def testCreateOptionalFile(): Unit = {
+    val outDir = File.createTempFile("test.", ".yml")
+    outDir.delete()
+    outDir.mkdir()
+
+    val pipeline = new Pipeline {
+      override def startFile: File = new File(".")
+      val file = createOptionalFile(true, "true")
+      val fileNot = createOptionalFile(false, "false")
+      override def outputDir: File = outDir
+    }
+
+    pipeline.file shouldBe Some(new File(pipeline.outputDir, "true"))
+    pipeline.mustHaveFilesProvider shouldBe Array(
+      Array(new File(pipeline.outputDir, "true")))
+    pipeline.fileNot shouldBe None
+    pipeline.mustNotHaveFilesProvider shouldBe Array(
+      Array(new File(pipeline.outputDir, "false")))
+  }
+
 }
