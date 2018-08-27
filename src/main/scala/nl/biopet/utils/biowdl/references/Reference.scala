@@ -39,7 +39,17 @@ trait Reference {
         .stripSuffix(".fna")
         .stripSuffix(".fasta") + ".dict")
 
+  /** This returns the input section of a bwa index */
+  def bwaIndexInputs: Map[String, Any] =
+    Map(
+      "fastaFile" -> bwaMemFasta
+        .getOrElse(throw new IllegalStateException)
+        .getAbsolutePath,
+      "indexFiles" -> bwaMemIndexFiles.map(_.getAbsolutePath)
+    ) ++ bwaMemAlt.map("altIndex" -> _.getAbsolutePath)
+
   def bwaMemFasta: Option[File] = None
+  def bwaMemAlt: Option[File] = None
   def bwaMemIndexFiles: List[File] =
     bwaMemFasta.toList.flatMap(
       x =>
