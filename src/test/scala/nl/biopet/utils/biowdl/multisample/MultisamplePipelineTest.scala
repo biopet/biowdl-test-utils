@@ -36,6 +36,7 @@ class MultisamplePipelineTest extends BiopetTest {
     outDir.mkdir()
     val pipeline = new MultisamplePipeline {
 
+      def expectedOutput = Map()
       override def samples: Map[String, Sample] =
         Map(
           "s1" -> Sample(
