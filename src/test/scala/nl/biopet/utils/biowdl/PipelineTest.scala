@@ -24,7 +24,6 @@ package nl.biopet.utils.biowdl
 import java.io.File
 
 import nl.biopet.test.BiopetTest
-import org.scalatest.exceptions.TestFailedException
 import org.testng.annotations.Test
 import play.api.libs.json._
 
