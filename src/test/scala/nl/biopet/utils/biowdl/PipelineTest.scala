@@ -77,7 +77,6 @@ class PipelineTest extends BiopetTest {
 
     val pipeline = new Pipeline {
       def startFile: File = new File(".")
-      def expectedOutput: Map[String, JsValue] = Map()
       val file = createFile("bla")
       override def outputDir: File = outDir
     }
@@ -95,7 +94,6 @@ class PipelineTest extends BiopetTest {
 
     val pipeline = new Pipeline {
       def startFile: File = new File(".")
-      def expectedOutput: Map[String, JsValue] = Map()
       val file = createOptionalFile(true, "true")
       val fileNot = createOptionalFile(false, "false")
       override def outputDir: File = outDir
@@ -108,97 +106,4 @@ class PipelineTest extends BiopetTest {
     pipeline.mustNotHaveFilesProvider shouldBe Array(
       Array(new File(pipeline.outputDir, "false")))
   }
-
-  @Test
-  def testParseOutputs(): Unit = {
-    val pipeline = new Pipeline {
-      def startFile: File = new File(".")
-      def expectedOutput: Map[String, JsValue] = Map()
-
-      override def logLines: List[String] =
-        List(
-          "[2018-08-28 15:09:39,92] [info] WorkflowExecutionActor-9fdca1ae-805e-4c4d-8421-09c7023bff3e [9fdca1ae]: Workflow AlignStar complete. Final Outputs:",
-          "{",
-          "  \"k1\": \"v1\",",
-          "  \"k2\": \"v2\",",
-          "  \"k3\": 3,",
-          "  \"k4\": true,",
-          "  \"k5\": null",
-          "}",
-          "[2018-08-28 15:09:39,96] [info] WorkflowManagerActor WorkflowActor-9fdca1ae-805e-4c4d-8421-09c7023bff3e is in a terminal state: WorkflowSucceededState"
-        )
-
-      def test = parseFinalOutputs
-    }
-
-    val outputs = pipeline.test
-    outputs.value.keySet shouldBe Set("k1", "k2", "k3", "k4", "k5")
-    outputs.value("k1") shouldBe JsString("v1")
-    outputs.value("k2") shouldBe JsString("v2")
-    outputs.value("k3") shouldBe JsNumber(3)
-    outputs.value("k4") shouldBe JsBoolean(true)
-    outputs.value("k5") shouldBe JsNull
-  }
-
-  @Test
-  def testExpectedOutputCorrect(): Unit = {
-    val pipeline = new Pipeline {
-      def startFile: File = new File(".")
-      def expectedOutput: Map[String, JsValue] = Map(
-        "k1" -> JsString("v1"),
-        "k2" -> JsString("v2"),
-        "k3" -> JsNumber(3),
-        "k4" -> JsBoolean(true),
-        "k5" -> JsNull
-      )
-
-      override def logLines: List[String] =
-        List(
-          "[2018-08-28 15:09:39,92] [info] WorkflowExecutionActor-9fdca1ae-805e-4c4d-8421-09c7023bff3e [9fdca1ae]: Workflow AlignStar complete. Final Outputs:",
-          "{",
-          "  \"k1\": \"v1\",",
-          "  \"k2\": \"v2\",",
-          "  \"k3\": 3,",
-          "  \"k4\": true,",
-          "  \"k5\": null",
-          "}",
-          "[2018-08-28 15:09:39,96] [info] WorkflowManagerActor WorkflowActor-9fdca1ae-805e-4c4d-8421-09c7023bff3e is in a terminal state: WorkflowSucceededState"
-        )
-
-      def test = parseFinalOutputs
-    }
-
-    pipeline.testExpectedOutput()
-  }
-
-  @Test
-  def testExpectedOutputIncorrect(): Unit = {
-    val pipeline = new Pipeline {
-      def startFile: File = new File(".")
-
-      def expectedOutput: Map[String, JsValue] = Map(
-        "k1" -> JsString("v1"),
-        "k2" -> JsString("v2"),
-        "k3" -> JsNumber(3),
-        "k4" -> JsBoolean(true),
-        "k5" -> JsNull
-      )
-
-      override def logLines: List[String] =
-        List(
-          "[2018-08-28 15:09:39,92] [info] WorkflowExecutionActor-9fdca1ae-805e-4c4d-8421-09c7023bff3e [9fdca1ae]: Workflow AlignStar complete. Final Outputs:",
-          "{",
-          "  \"k5\": null",
-          "}",
-          "[2018-08-28 15:09:39,96] [info] WorkflowManagerActor WorkflowActor-9fdca1ae-805e-4c4d-8421-09c7023bff3e is in a terminal state: WorkflowSucceededState"
-        )
-
-      def test = parseFinalOutputs
-    }
-
-    intercept[TestFailedException] {
-      pipeline.testExpectedOutput()
-    }
-  }
-
 }

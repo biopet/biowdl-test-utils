@@ -218,24 +218,6 @@ trait Pipeline extends BiopetTest with Logging {
     addMustHaveFile(p)
     new File(outputDir, p)
   }
-
-  protected def parseFinalOutputs: JsObject = {
-    val start = logLines.indexWhere(line =>
-      line.matches(".*Workflow .* complete. Final Outputs:$")) + 1
-    val end = logLines.indexWhere(_.startsWith("["), start)
-    val jsonText = logLines.slice(start, end).mkString("\n")
-    Json.parse(jsonText) match {
-      case o: JsObject => o
-      case _           => throw new IllegalArgumentException("Outputs should be a object")
-    }
-  }
-
-  def expectedOutput: Map[String, JsValue]
-
-  @Test(dependsOnGroups = Array("parseLog"))
-  def testExpectedOutput(): Unit = {
-    parseFinalOutputs.value shouldBe expectedOutput
-  }
 }
 
 object Pipeline {
