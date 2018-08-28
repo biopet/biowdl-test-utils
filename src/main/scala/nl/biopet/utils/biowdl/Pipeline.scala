@@ -28,7 +28,7 @@ import nl.biopet.utils.io.listDirectory
 import nl.biopet.test.BiopetTest
 import nl.biopet.utils.{Logging, conversions}
 import org.testng.annotations.{BeforeClass, DataProvider, Test}
-import play.api.libs.json.Json
+import play.api.libs.json._
 import org.apache.commons.io.FileUtils.deleteDirectory
 
 import scala.collection.mutable.ListBuffer
@@ -217,6 +217,16 @@ trait Pipeline extends BiopetTest with Logging {
     val p = path.mkString(File.separator)
     addMustHaveFile(p)
     new File(outputDir, p)
+  }
+
+  def parseFinalOutputs: JsObject = {
+    val start = logLines.indexWhere(line => line.matches(".*Workflow .* complete. Final Outputs:$")) + 1
+    val end = logLines.indexWhere(_.startsWith("["), start) - 1
+    val jsonText = logLines.slice(start, end).mkString("\n")
+    Json.parse(jsonText) match {
+      case o: JsObject => o
+      case _ => throw new IllegalArgumentException("Outputs should be a object")
+    }
   }
 
 }

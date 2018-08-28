@@ -102,4 +102,9 @@ class PipelineTest extends BiopetTest {
       Array(new File(pipeline.outputDir, "false")))
   }
 
+  @Test
+  def testParseOutputs(): Unit = {
+    ???
+  }
+
 }
