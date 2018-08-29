@@ -27,6 +27,7 @@ import nl.biopet.test.BiopetTest
 import org.testng.SkipException
 import org.testng.annotations.Test
 
+import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 class PipelineTest extends BiopetTest {
@@ -148,7 +149,7 @@ class PipelineTest extends BiopetTest {
     try {
       pipeline.run()
     } catch {
-      case e: Exception =>
+      case NonFatal(e) =>
         e.getMessage should not be "Integration tests are disabled"
     }
   }
