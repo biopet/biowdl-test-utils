@@ -127,7 +127,7 @@ class PipelineTest extends BiopetTest {
     try {
       pipeline.run()
     } catch {
-      case e: Exception =>
+      case NonFatal(e) =>
         e.getMessage should not be "Functional tests are disabled"
     }
   }
