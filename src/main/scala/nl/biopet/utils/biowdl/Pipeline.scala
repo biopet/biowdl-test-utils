@@ -30,6 +30,7 @@ import nl.biopet.utils.{Logging, conversions}
 import org.testng.annotations.{BeforeClass, DataProvider, Test}
 import play.api.libs.json.Json
 import org.apache.commons.io.FileUtils.deleteDirectory
+import org.testng.SkipException
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.Duration
@@ -59,6 +60,11 @@ trait Pipeline extends BiopetTest with Logging {
 
   @BeforeClass
   def run(): Unit = {
+    if (functionalTest && !functionalTests)
+      throw new SkipException("Functional tests are disabled")
+    if (!integrationTests && !functionalTest)
+      throw new SkipException("Integration tests are disabled")
+
     if (outputDir.exists()) {
       deleteDirectory(outputDir)
     }
@@ -219,6 +225,7 @@ trait Pipeline extends BiopetTest with Logging {
     new File(outputDir, p)
   }
 
+  def functionalTest: Boolean = false
 }
 
 object Pipeline {

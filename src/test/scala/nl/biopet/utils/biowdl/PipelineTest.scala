@@ -24,8 +24,10 @@ package nl.biopet.utils.biowdl
 import java.io.File
 
 import nl.biopet.test.BiopetTest
+import org.testng.SkipException
 import org.testng.annotations.Test
 
+import scala.util.control.NonFatal
 import scala.util.matching.Regex
 
 class PipelineTest extends BiopetTest {
@@ -100,6 +102,56 @@ class PipelineTest extends BiopetTest {
     pipeline.fileNot shouldBe None
     pipeline.mustNotHaveFilesProvider shouldBe Array(
       Array(new File(pipeline.outputDir, "false")))
+  }
+
+  @Test
+  def testFunctional(): Unit = {
+    val pipeline = new Pipeline {
+
+      /** File to start the pipeline from */
+      def startFile: File = new File(".")
+      override def functionalTest = true
+    }
+    System.clearProperty("biowdl.integrationTests")
+    System.clearProperty("biowdl.functionalTests")
+    intercept[SkipException] {
+      pipeline.run()
+    }.getMessage shouldBe "Functional tests are disabled"
+
+    System.setProperty("biowdl.functionalTests", "false")
+    intercept[SkipException] {
+      pipeline.run()
+    }.getMessage shouldBe "Functional tests are disabled"
+
+    System.setProperty("biowdl.functionalTests", "true")
+    try {
+      pipeline.run()
+    } catch {
+      case NonFatal(e) =>
+        e.getMessage should not be "Functional tests are disabled"
+    }
+  }
+
+  @Test
+  def testIntegration(): Unit = {
+    val pipeline = new Pipeline {
+
+      /** File to start the pipeline from */
+      def startFile: File = new File(".")
+    }
+    System.clearProperty("biowdl.functionalTests")
+    System.setProperty("biowdl.integrationTests", "false")
+    intercept[SkipException] {
+      pipeline.run()
+    }.getMessage shouldBe "Integration tests are disabled"
+
+    System.setProperty("biowdl.integrationTests", "true")
+    try {
+      pipeline.run()
+    } catch {
+      case NonFatal(e) =>
+        e.getMessage should not be "Integration tests are disabled"
+    }
   }
 
 }
