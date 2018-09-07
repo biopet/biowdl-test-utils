@@ -27,9 +27,5 @@ crossScalaVersions := Seq("2.11.12", "2.12.5")
 
 scalaVersion := "2.11.12"
 
-libraryDependencies += "com.github.biopet" %% "common-utils" % "0.7"
+libraryDependencies += "com.github.biopet" %% "common-utils" % "0.8"
 libraryDependencies += "com.github.biopet" %% "test-utils" % "0.4"
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5"
-libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19"
-libraryDependencies += "org.testng" % "testng" % "6.14.3"
