@@ -32,8 +32,10 @@ trait Rna3SingleEnd extends MultisamplePipeline {
       "lib1",
       "rg1",
       Map(
-        "reads" -> Map("R1" -> fixtureFile("samples", "rna3", "R1.fq.gz"),
-                       "R1_md5" -> "2e53e727dad4cbbfedadeb29404ca0d3")))
+        "reads" -> Map(
+          "R1" -> fixtureFile("samples", "rna3", "R1.fq.gz"),
+          "R1_md5" -> fixtureFile("samples", "rna3", "R1.fq.gz.md5")))
+    )
 }
 
 trait Rna3PairedEnd extends Rna3SingleEnd {
@@ -44,6 +46,8 @@ trait Rna3PairedEnd extends Rna3SingleEnd {
       "lib1",
       "rg1",
       Map(
-        "reads" -> Map("R2" -> fixtureFile("samples", "rna3", "R2.fq.gz"),
-                       "R2_md5" -> "f3e4227bb7ab4028f4f146b2f1ebe182")))
+        "reads" -> Map(
+          "R2" -> fixtureFile("samples", "rna3", "R2.fq.gz"),
+          "R2_md5" -> fixtureFile("samples", "rna3", "R2.fq.gz.md5")))
+    )
 }

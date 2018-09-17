@@ -31,10 +31,9 @@ trait Chip1SingleEnd extends MultisamplePipeline {
       "Chip1",
       "lib1",
       "rg1",
-      Map(
-        "reads" -> Map(
-          "R1" -> fixtureFile("samples", "chip1", "sample1_R1.fastq.gz"),
-          "R1_md5" -> "d538c6e674b7152cf201a10dd75f08e8"))
+      Map("reads" -> Map(
+        "R1" -> fixtureFile("samples", "chip1", "sample1_R1.fastq.gz"),
+        "R1_md5" -> fixtureFile("samples", "chip1", "sample1_R1.fastq.gz.md5")))
     )
 }
 
@@ -45,10 +44,9 @@ trait Chip1PairedEnd extends Chip1SingleEnd {
       "Chip1",
       "lib1",
       "rg1",
-      Map(
-        "reads" -> Map(
-          "R2" -> fixtureFile("samples", "chip1", "sample1_R2.fastq.gz"),
-          "R2_md5" -> "9b662817e93a625642e312f595c1d7e0"))
+      Map("reads" -> Map(
+        "R2" -> fixtureFile("samples", "chip1", "sample1_R2.fastq.gz"),
+        "R2_md5" -> fixtureFile("samples", "chip1", "sample1_R2.fastq.gz.md5")))
     )
 }
 
@@ -62,7 +60,9 @@ trait Control1SingleEnd extends MultisamplePipeline {
       Map(
         "reads" -> Map(
           "R1" -> fixtureFile("samples", "chip1", "sampleCon_R1.fastq.gz"),
-          "R1_md5" -> "8e475aa9239be5188f4850e989765dc3"))
+          "R1_md5" -> fixtureFile("samples",
+                                  "chip1",
+                                  "sampleCon_R1.fastq.gz.md5")))
     )
 }
 
@@ -75,7 +75,9 @@ trait Control1PairedEnd extends Control1SingleEnd {
       "rg1",
       Map(
         "reads" -> Map(
-          "R2" -> fixtureFile("samples", "chip1", "sampleCon_R2_fastqgz"),
-          "R2_md5" -> "a51c245c4e8790695d5299728e07360e"))
+          "R2" -> fixtureFile("samples", "chip1", "sampleCon_R2_fastq.gz"),
+          "R2_md5" -> fixtureFile("samples",
+                                  "chip1",
+                                  "sampleCon_R2_fastq.gz.md5")))
     )
 }

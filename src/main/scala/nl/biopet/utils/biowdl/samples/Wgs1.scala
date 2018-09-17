@@ -32,8 +32,10 @@ trait Wgs1SingleEnd extends MultisamplePipeline {
       "lib1",
       "rg1",
       Map(
-        "reads" -> Map("R1" -> fixtureFile("samples", "wgs1", "R1.fq.gz"),
-                       "R1_md5" -> "b859d6dd76a6861ce7e9a978ae2e530e")))
+        "reads" -> Map(
+          "R1" -> fixtureFile("samples", "wgs1", "R1.fq.gz"),
+          "R1_md5" -> fixtureFile("samples", "wgs1", "R1.fq.gz.md5")))
+    )
 }
 
 trait Wgs1PairedEnd extends Wgs1SingleEnd {
@@ -44,6 +46,8 @@ trait Wgs1PairedEnd extends Wgs1SingleEnd {
       "lib1",
       "rg1",
       Map(
-        "reads" -> Map("R2" -> fixtureFile("samples", "wgs1", "R2.fq.gz"),
-                       "R2_md5" -> "986acc7bda0bf2ef55c52431f54fe3a9")))
+        "reads" -> Map(
+          "R2" -> fixtureFile("samples", "wgs1", "R2.fq.gz"),
+          "R2_md5" -> fixtureFile("samples", "wgs1", "R2.fq.gz.md5")))
+    )
 }
