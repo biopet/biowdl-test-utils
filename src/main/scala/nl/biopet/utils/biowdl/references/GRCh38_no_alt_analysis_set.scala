@@ -23,42 +23,45 @@ package nl.biopet.utils.biowdl.references
 
 import java.io.File
 
+import nl.biopet.utils.biowdl.{fixtureFile, fixtureDir}
+
+
 trait GRCh38_no_alt_analysis_set extends Reference {
   def referenceSpecies = "H.sapiens"
   def referenceName = "test"
   def referenceFasta: File =
-    new File(
-      "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa")
+    fixtureFile(
+      "references/H.sapiens/GRCh38_no_alt_analysis_set/reference.fa")
 
   override def bwaMemFasta =
-    Some(new File(
-      "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/bwa/reference.fa"))
+    Some(fixtureFile(
+      "references/H.sapiens/GRCh38_no_alt_analysis_set/bwa/reference.fa"))
 
   override def bowtieIndex: Option[File] =
-    Some(new File(
-      "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/bowtie/reference.fasta"))
+    Some(fixtureFile(
+      "references/H.sapiens/GRCh38_no_alt_analysis_set/bowtie/reference.fasta"))
 
   override def bowtie2Index: Option[File] =
-    Some(new File(
-      "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/bowtie2/reference.fasta"))
+    Some(fixtureFile(
+      "references/H.sapiens/GRCh38_no_alt_analysis_set/bowtie2/reference.fasta"))
 
   override def tophatIndex: Option[String] =
-    Some(
-      "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/bowtie2/reference.fasta")
+    Some(fixtureDir +
+      "references/H.sapiens/GRCh38_no_alt_analysis_set/bowtie2/reference.fasta")
 
   override def gsnapDir: Option[File] =
     Some(
-      new File(
-        "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/gmap"))
+      fixtureFile(
+        "references/H.sapiens/GRCh38_no_alt_analysis_set/gmap"))
 
   override def gsnapDb: Option[String] = Some("GRCh38_no_alt_analysis_set")
 
   override def starGenomeDir: Option[File] =
     Some(
-      new File(
-        "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/star"))
+      fixtureFile(
+        "references/H.sapiens/GRCh38_no_alt_analysis_set/star"))
 
   override def hisat2Index: Option[String] =
-    Some(
-      "/exports/genomes/species/H.sapiens/GRCh38_no_alt_analysis_set/hisat2/reference")
+    Some(fixtureDir +
+      "references/H.sapiens/GRCh38_no_alt_analysis_set/hisat2/reference")
 }

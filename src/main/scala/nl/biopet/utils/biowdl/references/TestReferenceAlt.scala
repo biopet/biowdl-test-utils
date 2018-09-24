@@ -31,10 +31,10 @@ import nl.biopet.utils.biowdl.{fixtureDir, fixtureFile}
 trait TestReferenceAlt extends Reference {
   def referenceSpecies = "test"
   def referenceName = "test_alt"
-  def referenceFasta: File = fixtureFile("reference_alt/reference.fasta")
+  def referenceFasta: File = fixtureFile("references/test/reference_alt/reference.fasta")
 
   override def bwaMemFasta =
-    Some(fixtureFile("reference_alt/bwa/reference.fasta"))
+    Some(fixtureFile("references/test/reference_alt/bwa/reference.fasta"))
   override def bwaMemAlt =
-    Some(fixtureFile("reference_alt/bwa/reference.fasta.alt"))
+    Some(fixtureFile("references/test/reference_alt/bwa/reference.fasta.alt"))
 }

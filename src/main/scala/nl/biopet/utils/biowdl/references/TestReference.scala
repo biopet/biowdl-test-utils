@@ -31,25 +31,25 @@ import nl.biopet.utils.biowdl.{fixtureFile, fixtureDir}
 trait TestReference extends Reference {
   def referenceSpecies = "test"
   def referenceName = "test"
-  def referenceFasta: File = fixtureFile("reference/reference.fasta")
+  def referenceFasta: File = fixtureFile("references/test/reference/reference.fasta")
 
-  override def bwaMemFasta = Some(fixtureFile("reference/bwa/reference.fasta"))
+  override def bwaMemFasta = Some(fixtureFile("references/test/reference/bwa/reference.fasta"))
 
   override def bowtieIndex: Option[File] =
-    Some(fixtureFile("reference/bowtie/reference"))
+    Some(fixtureFile("references/test/reference/bowtie/reference"))
 
   override def bowtie2Index: Option[File] =
-    Some(fixtureFile("reference/bowtie2/reference"))
+    Some(fixtureFile("references/test/reference/bowtie2/reference"))
 
   override def tophatIndex: Option[String] =
-    Some(fixtureDir + "reference/bowtie2/reference")
+    Some(fixtureDir + "references/test/reference/bowtie2/reference")
 
-  override def gsnapDir: Option[File] = Some(fixtureFile("reference/gmap"))
+  override def gsnapDir: Option[File] = Some(fixtureFile("references/test/reference/gmap"))
 
   override def gsnapDb: Option[String] = Some("reference")
 
-  override def starGenomeDir: Option[File] = Some(fixtureFile("reference/star"))
+  override def starGenomeDir: Option[File] = Some(fixtureFile("references/test/reference/star"))
 
   override def hisat2Index: Option[String] =
-    Some(fixtureDir + "reference/hisat2/reference")
+    Some(fixtureDir + "references/test/reference/hisat2/reference")
 }
