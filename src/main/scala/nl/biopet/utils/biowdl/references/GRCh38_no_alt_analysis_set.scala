@@ -46,7 +46,7 @@ trait GRCh38_no_alt_analysis_set extends Reference {
 
   override def tophatIndex: Option[String] =
     Some(fixtureDir +
-      "references/H.sapiens/GRCh38_no_alt_analysis_set/bowtie2/reference.fasta")
+      "/references/H.sapiens/GRCh38_no_alt_analysis_set/bowtie2/reference.fasta")
 
   override def gsnapDir: Option[File] =
     Some(fixtureFile("references/H.sapiens/GRCh38_no_alt_analysis_set/gmap"))
@@ -59,5 +59,5 @@ trait GRCh38_no_alt_analysis_set extends Reference {
   override def hisat2Index: Option[String] =
     Some(
       fixtureDir +
-        "references/H.sapiens/GRCh38_no_alt_analysis_set/hisat2/reference")
+        "/references/H.sapiens/GRCh38_no_alt_analysis_set/hisat2/reference")
 }

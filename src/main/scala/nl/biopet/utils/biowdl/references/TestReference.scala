@@ -44,7 +44,7 @@ trait TestReference extends Reference {
     Some(fixtureFile("references/test/reference/bowtie2/reference"))
 
   override def tophatIndex: Option[String] =
-    Some(fixtureDir + "references/test/reference/bowtie2/reference")
+    Some(fixtureDir + "/references/test/reference/bowtie2/reference")
 
   override def gsnapDir: Option[File] =
     Some(fixtureFile("references/test/reference/gmap"))
@@ -55,5 +55,5 @@ trait TestReference extends Reference {
     Some(fixtureFile("references/test/reference/star"))
 
   override def hisat2Index: Option[String] =
-    Some(fixtureDir + "references/test/reference/hisat2/reference")
+    Some(fixtureDir + "/references/test/reference/hisat2/reference")
 }
