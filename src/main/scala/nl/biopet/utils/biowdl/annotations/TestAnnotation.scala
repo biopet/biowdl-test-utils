@@ -27,7 +27,7 @@ import nl.biopet.utils.biowdl.fixtureFile
 import nl.biopet.utils.biowdl.references.TestReference
 
 trait TestAnnotation extends Annotation with TestReference {
-  def referenceGtf: Option[File] = Some(fixtureFile("reference/reference.gtf"))
+  def referenceGtf: Option[File] = Some(fixtureFile("references/test/reference/reference.gtf"))
   def referenceRefflat: Option[File] =
-    Some(fixtureFile("reference/reference.refflat"))
+    Some(fixtureFile("references/test/reference/reference.refflat"))
 }
