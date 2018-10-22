@@ -152,8 +152,8 @@ trait Pipeline extends BiopetTest with Logging {
     val cachedRegex = ".*\\(CallCached\\): '(.*)'.*".r
 
     val jobs = lines.collect {
-      case startRegex(job) => job
-    }
+      case startRegex(job) => job.split(", ")
+    }.flatten
 
     val cached = lines.collect {
       case cachedRegex(job) => job
