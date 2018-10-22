@@ -132,16 +132,22 @@ trait Pipeline extends BiopetTest with Logging {
   /** exitvalue of the pipeline, if this is -1 the pipeline is not executed yet */
   def exitValue: Option[Int] = _exitValue
 
-  @Test(priority = -1) def exitcode(): Unit = exitValue shouldBe Some(0)
+  @Test(priority = -1, groups = Array("exitcode"))
+  def exitcode(): Unit = exitValue shouldBe Some(0)
+
   @Test def outputDirExist(): Unit = {
     assert(outputDir.exists())
     assert(outputDir.isDirectory)
   }
 
-  @Test(dependsOnMethods = Array("exitcode"))
+  @Test(dependsOnGroups = Array("exitcode"))
   def testCallCaching(): Unit = {
     runPipeline(true)
-    //TODO: add log check
+    exitValue shouldBe Some(0)
+    val reader = Source.fromFile(rerunLogFile)
+    val t = reader.getLines().exists(_.contains("")) //TODO: check text to grep
+    reader.close()
+    assert(!t, "Jobs did rerun, should not happen")
   }
 
   private val mustHaveFiles: ListBuffer[File] = ListBuffer()
