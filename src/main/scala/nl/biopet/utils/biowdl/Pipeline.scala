@@ -145,9 +145,21 @@ trait Pipeline extends BiopetTest with Logging {
     runPipeline(true)
     exitValue shouldBe Some(0)
     val reader = Source.fromFile(rerunLogFile)
-    val t = reader.getLines().exists(_.contains("")) //TODO: check text to grep
+    val lines = reader.getLines().toList
     reader.close()
-    assert(!t, "Jobs did rerun, should not happen")
+
+    val startRegex = ".*: Starting (.*)".r
+    val cachedRegex = ".*\\(CallCached\\): '(.*)'.*".r
+
+    val jobs = lines.collect {
+      case startRegex(job) => job
+    }
+
+    val cached = lines.collect {
+      case cachedRegex(job) => job
+    }
+
+    jobs.toSet shouldBe cached.toSet
   }
 
   private val mustHaveFiles: ListBuffer[File] = ListBuffer()
