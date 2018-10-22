@@ -47,10 +47,13 @@ trait Pipeline extends BiopetTest with Logging {
   /** Name of the pipeline inside the wdl file, will be used for configs */
   def startPipelineName: String = startFile.getName.stripSuffix(".wdl")
 
+  def backend: String = cromwellBackend
+
   /** This can be overwritten by the pipeline */
   def inputs: Map[String, Any] = Map()
 
   def logFile: File = new File(outputDir, "log.out")
+  def rerunLogFile: File = new File(outputDir, "rerun.log.out")
 
   /** Output dir of pipeline */
   def outputDir =
@@ -58,32 +61,10 @@ trait Pipeline extends BiopetTest with Logging {
 
   def createImportsZip: Boolean = zipped
 
-  @BeforeClass
-  def run(): Unit = {
-    if (functionalTest && !functionalTests)
-      throw new SkipException("Functional tests are disabled")
-    if (!integrationTests && !functionalTest)
-      throw new SkipException("Integration tests are disabled")
-
-    if (outputDir.exists()) {
-      deleteDirectory(outputDir)
-    }
-    outputDir.mkdirs()
-
-    val zippedFile = if (createImportsZip) {
-      val files =
-        listDirectory(new File("."), recursive = true)
-          .filter(_.getName.endsWith(".wdl"))
-      val zipFile = new File(outputDir, "imports.zip")
-      val zipCmd = Seq("zip", zipFile.toString) ++ files.map(_.toString)
-      val p = Process(zipCmd, cwd = startFile.getParentFile).run()
-      require(p.exitValue() == 0)
-      Some(zipFile)
-    } else None
-
-    val inputsFile = Pipeline.writeInputs(outputDir, inputs)
-
-    val javaCmd = Seq("java") ++
+  private def runPipeline(rerun: Boolean = false): Unit = {
+    val javaCmd = Seq(
+      "java",
+      s"-Dbackend.providers.$backend.config.root=${outputDir.getAbsolutePath}/.cromwell-executions") ++
       cromwellConfig
         .map(c => s"-Dconfig.file=${c.getAbsolutePath}")
         .toSeq ++
@@ -94,13 +75,11 @@ trait Pipeline extends BiopetTest with Logging {
                                           "run",
                                           "-i",
                                           inputsFile.getAbsolutePath) ++
-      zippedFile.toSeq.flatMap(x => List("--imports", x.getAbsolutePath)) ++
+      createImportZip.toSeq.flatMap(x => List("--imports", x.getAbsolutePath)) ++
       Seq(startFile.getAbsolutePath)
 
-    if (!outputDir.exists()) outputDir.mkdirs()
-    if (logFile.exists()) logFile.delete()
     val future = Future {
-      val writer = new PrintWriter(logFile)
+      val writer = new PrintWriter(if (rerun) rerunLogFile else logFile)
 
       def writeLine(line: String): Unit = {
         writer.println(line)
@@ -118,6 +97,36 @@ trait Pipeline extends BiopetTest with Logging {
     logger.info(s"Done command: ${cmd.mkString(" ")}")
   }
 
+  lazy private val createImportZip: Option[File] = {
+    if (createImportsZip) {
+      val files =
+        listDirectory(new File("."), recursive = true)
+          .filter(_.getName.endsWith(".wdl"))
+      val zipFile = new File(outputDir, "imports.zip")
+      val zipCmd = Seq("zip", zipFile.toString) ++ files.map(_.toString)
+      val p = Process(zipCmd, cwd = startFile.getParentFile).run()
+      require(p.exitValue() == 0)
+      Some(zipFile)
+    } else None
+  }
+
+  lazy private val inputsFile: File = Pipeline.writeInputs(outputDir, inputs)
+
+  @BeforeClass
+  def run(): Unit = {
+    if (functionalTest && !functionalTests)
+      throw new SkipException("Functional tests are disabled")
+    if (!integrationTests && !functionalTest)
+      throw new SkipException("Integration tests are disabled")
+
+    if (outputDir.exists()) {
+      deleteDirectory(outputDir)
+    }
+    outputDir.mkdirs()
+
+    runPipeline()
+  }
+
   private var _exitValue: Option[Int] = None
 
   /** exitvalue of the pipeline, if this is -1 the pipeline is not executed yet */
@@ -127,6 +136,12 @@ trait Pipeline extends BiopetTest with Logging {
   @Test def outputDirExist(): Unit = {
     assert(outputDir.exists())
     assert(outputDir.isDirectory)
+  }
+
+  @Test(dependsOnMethods = Array("exitcode"))
+  def testCallCaching(): Unit = {
+    runPipeline(true)
+    //TODO: add log check
   }
 
   private val mustHaveFiles: ListBuffer[File] = ListBuffer()
