@@ -159,7 +159,8 @@ trait Pipeline extends BiopetTest with Logging {
       case cachedRegex(job) => job
     }
 
-    jobs.toSet shouldBe cached.toSet
+    val notCached = jobs.diff(cached)
+    assert(notCached.isEmpty, s"Some jobs are not cached: ${notCached.mkString(", ")}")
   }
 
   private val mustHaveFiles: ListBuffer[File] = ListBuffer()
