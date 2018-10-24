@@ -52,6 +52,11 @@ package object biowdl {
     extraOptions.map(_.split(",").toSeq).getOrElse(Seq[String]())
   }
 
+  def cromwellBackend: String = {
+    Option(System.getProperties.getProperty("cromwell.backend"))
+      .getOrElse("Local")
+  }
+
   def speciesDir: Option[File] = {
     Option(System.getProperties.getProperty("biowdl.species.dir"))
       .map(new File(_))
