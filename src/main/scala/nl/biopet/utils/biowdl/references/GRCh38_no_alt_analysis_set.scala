@@ -54,7 +54,9 @@ trait GRCh38_no_alt_analysis_set extends Reference {
   override def gsnapDb: Option[String] = Some("GRCh38_no_alt_analysis_set")
 
   override def starGenomeDir: Option[File] =
-    Some(fixtureFile("references/H.sapiens/GRCh38_no_alt_analysis_set/star"))
+    Some(
+      fixtureFile(
+        "references/H.sapiens/GRCh38_no_alt_analysis_set/star_2.6.0c"))
 
   override def hisat2Index: Option[String] =
     Some(
