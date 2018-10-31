@@ -149,15 +149,32 @@ trait Pipeline extends BiopetTest with Logging {
     reader.close()
 
     val startRegex = ".*: Starting (.*)".r
-    val cachedRegex = ".*\\(CallCached\\): '(.*)'.*".r
+    val startJobRegex = "(.*) \\(([0-9]+) shards\\)".r
 
-    val jobs = lines.collect {
-      case startRegex(job) => job.split(", ")
-    }.flatten
+    val cachedRegex = ".*\\(CallCached\\): (.*)".r
+    val cachedShardRegex =
+      "'(.*)' \\(scatter index: (None|Some\\([0-9]+\\)), attempt [0-9+]\\)".r
 
-    val cached = lines.collect {
-      case cachedRegex(job) => job
-    }
+    val jobs = lines
+      .collect {
+        case startRegex(job) => job.split(", ")
+      }
+      .flatten
+      .flatMap(job => {
+        job match {
+          case startJobRegex(jobName, shards) =>
+            (0 until shards.toInt).map(shard => List(jobName, s"Some($shard)"))
+          case _ => List(List(job, "None"))
+        }
+      })
+
+    val cached = lines
+      .collect {
+        case cachedRegex(cachedLine) => cachedLine
+      }
+      .map {
+        case cachedShardRegex(jobName, shard) => List(jobName, shard)
+      }
 
     val notCached = jobs.diff(cached)
     assert(notCached.isEmpty,
