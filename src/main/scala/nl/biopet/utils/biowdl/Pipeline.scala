@@ -87,9 +87,7 @@ trait Pipeline extends BiopetTest with Logging {
       }
       logger.info(s"Start command: ${cmd.mkString(" ")}")
       val process =
-        // startFile.getParentFile -> Run in root directory of WDL pipeline file because of imports issue
-        Process(cmd).run(ProcessLogger(line =>
-          writeLine(line)))
+        Process(cmd).run(ProcessLogger(line => writeLine(line)))
       _exitValue = Some(process.exitValue())
       writer.close()
     }(executionContext)
