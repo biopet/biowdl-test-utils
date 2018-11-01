@@ -121,7 +121,7 @@ trait Pipeline extends BiopetTest with Logging {
       deleteDirectory(outputDir)
     }
     outputDir.mkdirs()
-
+    val inputs = inputsFile
     runPipeline()
   }
 
