@@ -140,7 +140,7 @@ trait Pipeline extends BiopetTest with Logging {
     assert(outputDir.isDirectory)
   }
 
-//  Do not test this yet as this causes problems.
+//  Do not test this yet as this may cause problems.
 //  @Test(dependsOnGroups = Array("exitcode"))
   def testCallCaching(): Unit = {
     runPipeline(true)
