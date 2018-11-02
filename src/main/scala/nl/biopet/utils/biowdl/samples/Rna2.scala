@@ -33,7 +33,7 @@ trait Rna2SingleEnd extends MultisamplePipeline {
       "L1",
       Map(
         "reads" -> Map(
-          "R1" -> fixtureFile("samples", "rna1", "S18_L1_1.fq.gz")
+          "R1" -> fixtureFile("samples", "rna2", "S18_L1_1.fq.gz")
         )
       )
     )
@@ -48,7 +48,7 @@ trait Rna2PairedEnd extends Rna2SingleEnd {
       "L1",
       Map(
         "reads" -> Map(
-          "R2" -> fixtureFile("samples", "rna1", "S18_L1_2.fq.gz")
+          "R2" -> fixtureFile("samples", "rna2", "S18_L1_2.fq.gz")
         )
       )
     )
