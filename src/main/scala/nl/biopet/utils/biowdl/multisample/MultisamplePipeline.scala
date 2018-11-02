@@ -53,7 +53,8 @@ trait MultisamplePipeline extends Pipeline {
       sampleConfigFile.getAbsolutePath))
   }
 
-  @BeforeClass(groups = Array("createFiles"))
+  @BeforeClass(groups = Array("createFiles"),
+               dependsOnGroups = Array("createFolder"))
   def writeFilesMultiSample(): Unit = {
     mapToYamlFile(sampleConfig, sampleConfigFile)
   }

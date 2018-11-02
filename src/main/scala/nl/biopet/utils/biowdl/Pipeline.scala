@@ -110,7 +110,15 @@ trait Pipeline extends BiopetTest with Logging {
 
   lazy private val inputsFile: File = new File(outputDir, "inputs.json")
 
-  @BeforeClass(groups = Array("createFiles"))
+  @BeforeClass(groups = Array("createFolder"))
+  def writeFolder(): Unit = {
+    if (outputDir.exists()) {
+      deleteDirectory(outputDir)
+    }
+    outputDir.mkdirs()
+  }
+  @BeforeClass(groups = Array("createFiles"),
+               dependsOnGroups = Array("createFolder"))
   def writeFiles(): Unit = {
     // Write input data to inputsFile
     writeLinesToFile(inputsFile,
@@ -123,10 +131,6 @@ trait Pipeline extends BiopetTest with Logging {
     if (!integrationTests && !functionalTest)
       throw new SkipException("Integration tests are disabled")
 
-    if (outputDir.exists()) {
-      deleteDirectory(outputDir)
-    }
-    outputDir.mkdirs()
     runPipeline()
   }
 
