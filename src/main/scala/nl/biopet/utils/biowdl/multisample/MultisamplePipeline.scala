@@ -24,7 +24,7 @@ package nl.biopet.utils.biowdl.multisample
 import java.io.File
 
 import nl.biopet.utils.biowdl.Pipeline
-import nl.biopet.utils.conversions.mapToYamlFile
+import nl.biopet.utils.conversions.mapToYaml
 import nl.biopet.utils.conversions.mergeMaps
 import org.testng.annotations.{BeforeClass, DataProvider, Test}
 
@@ -53,11 +53,9 @@ trait MultisamplePipeline extends Pipeline {
       sampleConfigFile.getAbsolutePath))
   }
 
-  @BeforeClass(groups = Array("createFiles"),
-               dependsOnGroups = Array("createFolder"))
-  def writeFilesMultiSample(): Unit = {
-    mapToYamlFile(sampleConfig, sampleConfigFile)
-  }
+  override def testFiles: List[(File, List[String])] =
+    super.testFiles ++
+      List((sampleConfigFile, List(mapToYaml(sampleConfig))))
 
   @DataProvider(name = "samples")
   def sampleProvider: Array[Array[Sample]] =

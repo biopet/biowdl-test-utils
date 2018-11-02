@@ -110,22 +110,38 @@ trait Pipeline extends BiopetTest with Logging {
 
   lazy private val inputsFile: File = new File(outputDir, "inputs.json")
 
-  @BeforeClass(groups = Array("createFolder"))
-  def writeFolder(): Unit = {
-    if (outputDir.exists()) {
-      deleteDirectory(outputDir)
-    }
-    outputDir.mkdirs()
-  }
-  @BeforeClass(groups = Array("createFiles"),
-               dependsOnGroups = Array("createFolder"))
-  def writeFiles(): Unit = {
-    // Write input data to inputsFile
-    writeLinesToFile(inputsFile,
-                     List(Json.stringify(conversions.mapToJson(inputs))))
-  }
+  /**
+    * A list of tuples. Each tuple containing a file to be created
+    * and a list of strings resembling the content.
+    * These files will be created before the pipelinetest starts.
+    * @return a list of files and content
+    */
+  def testFiles: List[(File, List[String])] = List(
+    (inputsFile, List(Json.stringify(conversions.mapToJson(inputs))))
+  )
+
+  /**
+    * A list of directories that is necessary for the pipeline test
+    * @return a list of directories
+    */
+  def testDirs: List[File] = List(outputDir)
+
   @BeforeClass(dependsOnGroups = Array("createFiles"))
   def run(): Unit = {
+    // Create necessary directories
+    testDirs.foreach { directory =>
+      if (directory.exists()) {
+        deleteDirectory(directory)
+      }
+      directory.mkdirs()
+    }
+
+    // create necessary testfiles
+    testFiles.foreach {
+      case (file, content) =>
+        writeLinesToFile(file, content)
+    }
+
     if (functionalTest && !functionalTests)
       throw new SkipException("Functional tests are disabled")
     if (!integrationTests && !functionalTest)
