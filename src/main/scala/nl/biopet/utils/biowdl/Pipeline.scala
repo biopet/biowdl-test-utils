@@ -110,7 +110,13 @@ trait Pipeline extends BiopetTest with Logging {
 
   lazy private val inputsFile: File = new File(outputDir, "inputs.json")
 
-  @BeforeClass
+  @BeforeClass(groups = Array("createFiles"))
+  def writeFiles(): Unit = {
+    // Write input data to inputsFile
+    writeLinesToFile(inputsFile,
+                     List(Json.stringify(conversions.mapToJson(inputs))))
+  }
+  @BeforeClass(dependsOnGroups = Array("createFiles"))
   def run(): Unit = {
     if (functionalTest && !functionalTests)
       throw new SkipException("Functional tests are disabled")
@@ -121,10 +127,6 @@ trait Pipeline extends BiopetTest with Logging {
       deleteDirectory(outputDir)
     }
     outputDir.mkdirs()
-
-    // Write input data to inputsFile
-    writeLinesToFile(inputsFile,
-                     List(Json.stringify(conversions.mapToJson(inputs))))
     runPipeline()
   }
 

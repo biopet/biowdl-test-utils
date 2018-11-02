@@ -26,7 +26,7 @@ import java.io.File
 import nl.biopet.utils.biowdl.Pipeline
 import nl.biopet.utils.conversions.mapToYamlFile
 import nl.biopet.utils.conversions.mergeMaps
-import org.testng.annotations.{DataProvider, Test}
+import org.testng.annotations.{BeforeClass, DataProvider, Test}
 
 trait MultisamplePipeline extends Pipeline {
   def samples: Map[String, Sample] = Map()
@@ -49,9 +49,13 @@ trait MultisamplePipeline extends Pipeline {
   def sampleConfigFile = new File(outputDir, "samples.yml")
 
   override def inputs: Map[String, Any] = {
-    mapToYamlFile(sampleConfig, sampleConfigFile)
     super.inputs + (s"$startPipelineName.sampleConfigFiles" -> Array(
       sampleConfigFile.getAbsolutePath))
+  }
+
+  @BeforeClass(groups = Array("createFiles"))
+  def writeFilesMultiSample(): Unit = {
+    mapToYamlFile(sampleConfig, sampleConfigFile)
   }
 
   @DataProvider(name = "samples")
