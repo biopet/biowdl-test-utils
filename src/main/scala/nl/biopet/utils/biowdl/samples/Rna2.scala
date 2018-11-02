@@ -28,7 +28,7 @@ trait Rna2SingleEnd extends MultisamplePipeline {
   override def samples: Map[String, Sample] =
     addReadgroup(
       super.samples,
-      "rna1",
+      "rna2",
       "S18",
       "L1",
       Map(
@@ -43,7 +43,7 @@ trait Rna2PairedEnd extends Rna2SingleEnd {
   override def samples: Map[String, Sample] =
     addReadgroup(
       super.samples,
-      "rna1",
+      "rna2",
       "S18",
       "L1",
       Map(
