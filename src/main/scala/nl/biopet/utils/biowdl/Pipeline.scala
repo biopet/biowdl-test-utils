@@ -108,7 +108,7 @@ trait Pipeline extends BiopetTest with Logging {
     } else None
   }
 
-  lazy private val inputsFile: File = Pipeline.writeInputs(outputDir, inputs)
+  lazy private val inputsFile: File = new File(outputDir, "inputs.json")
 
   @BeforeClass
   def run(): Unit = {
@@ -122,6 +122,9 @@ trait Pipeline extends BiopetTest with Logging {
     }
     outputDir.mkdirs()
 
+    // Write input data to inputsFile
+    writeLinesToFile(inputsFile,
+                     List(Json.stringify(conversions.mapToJson(inputs))))
     runPipeline()
   }
 
@@ -277,14 +280,4 @@ trait Pipeline extends BiopetTest with Logging {
   }
 
   def functionalTest: Boolean = false
-}
-
-object Pipeline {
-  def writeInputs(outputDir: File, inputs: Map[String, Any]): File = {
-    val outputFile = new File(outputDir, "inputs.json")
-    writeLinesToFile(outputFile,
-                     List(Json.stringify(conversions.mapToJson(inputs))))
-
-    outputFile
-  }
 }
