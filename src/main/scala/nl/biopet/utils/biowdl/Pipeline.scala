@@ -64,7 +64,7 @@ trait Pipeline extends BiopetTest with Logging {
   private def runPipeline(rerun: Boolean = false): Unit = {
     val javaCmd = Seq(
       "java",
-      s"-Dbackend.providers.$backend.config.root=${outputDir.getAbsolutePath}/.cromwell-executions") ++
+      s"-Dbackend.providers.$backend.config.root=${globalOutputDir.getAbsolutePath}/.cromwell-executions") ++
       cromwellConfig
         .map(c => s"-Dconfig.file=${c.getAbsolutePath}")
         .toSeq ++
