@@ -54,17 +54,17 @@ trait MultisamplePipeline extends Pipeline {
 
   @DataProvider(name = "samples")
   def sampleProvider: Array[Array[Sample]] =
-    samples.values.map(x => Array(x)).toArray
+    samples.map(Array(_)).toArray
 
   @DataProvider(name = "libraries")
   def libraryProvider: Array[Array[Library]] =
-    samples.flatMap(sample => sample._2.libraries.map(x => Array(x._2))).toArray
+    samples.flatMap(_.libraries).map(Array(_)).toArray
 
   @DataProvider(name = "readgroups")
   def readgroupProvider: Array[Array[Readgroup]] =
     samples
-      .flatMap(sample =>
-        sample._2.libraries.flatMap(_._2.readgroups.map(x => Array(x._2))))
+      .flatMap(_.libraries.flatMap(_.readgroups))
+      .map(Array(_))
       .toArray
 
   @Test(dataProvider = "samples")
@@ -85,13 +85,19 @@ trait MultisamplePipeline extends Pipeline {
     readgroupDir(readgroup).isDirectory shouldBe true
   }
 
-  def addSample(current: Map[String, Sample],
+  def addSample(current: List[Sample],
                 sample: String,
-                config: Map[String, Any] = Map()): Map[String, Sample] = {
-    current.get(sample) match {
-      case Some(s) =>
-        current + (sample -> s.copy(config = mergeMaps(s.config, config)))
-      case _ => current + (sample -> Sample(sample, config))
+                config: Map[String, Any] = Map(),
+                libraries: List[Library] = List()): List[Sample] = {
+    current.indexWhere(_.name == sample) match {
+      // -1 -> item was not found in sample list
+      case -1 => current ++ List(Sample(sample, config))
+      // else -> it was found on some index
+      case x =>
+        current.drop(x) ++ List(
+          Sample(sample,
+                 mergeMaps(current(x).config, config),
+                 current(x).libraries ++ libraries))
     }
   }
 
