@@ -26,18 +26,16 @@ package object multisample {
                     config: Map[String, Any] = Map(),
                     libraries: List[Library] = List()) {
     def toMap: Map[String, Any] =
-      Map("name" -> name) ++ config ++ Map("libraries" -> libraries.map {
-        case (library) => library.toMap
-      })
+      Map("name" -> name) ++ config ++ Map(
+        "libraries" -> libraries.map(_.toMap))
   }
+
   case class Library(sample: String,
                      name: String,
                      config: Map[String, Any] = Map(),
                      readgroups: List[Readgroup] = List()) {
     def toMap: Map[String, Any] =
-      Map("name" -> name) ++ config + ("readgroups" -> readgroups.map {
-        case (readgroup: Readgroup) => readgroup.toMap
-      })
+      Map("name" -> name) ++ config + ("readgroups" -> readgroups.map(_.toMap))
   }
   case class Readgroup(sample: String,
                        library: String,

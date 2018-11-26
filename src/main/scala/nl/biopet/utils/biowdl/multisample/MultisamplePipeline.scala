@@ -29,23 +29,21 @@ import nl.biopet.utils.conversions.mergeMaps
 import org.testng.annotations.{DataProvider, Test}
 
 trait MultisamplePipeline extends Pipeline {
-  def samples: Map[String, Sample] = Map()
+  def samples: List[Sample] = List()
 
   def sampleDir(sample: Sample): File = sampleDir(sample.name)
   def sampleDir(sample: String) =
     new File(outputDir, "samples" + File.separator + sample)
   def libraryDir(library: Library): File =
-    libraryDir(library.sample, library.library)
+    libraryDir(library.sample, library.name)
   def libraryDir(sample: String, library: String) =
     new File(sampleDir(sample), s"lib_$library")
   def readgroupDir(readgroup: Readgroup): File =
-    readgroupDir(readgroup.sample, readgroup.library, readgroup.readgroup)
+    readgroupDir(readgroup.sample, readgroup.library, readgroup.name)
   def readgroupDir(sample: String, library: String, readgroup: String) =
     new File(libraryDir(sample, library), s"rg_$readgroup")
 
-  val sampleConfig: Map[String, Any] = Map("samples" -> samples.map {
-    case (name, sample) => name -> sample.toMap
-  })
+  val sampleConfig: Map[String, Any] = Map("samples" -> samples.map(_.toMap))
   def sampleConfigFile = new File(outputDir, "samples.yml")
 
   override def inputs: Map[String, Any] = {
