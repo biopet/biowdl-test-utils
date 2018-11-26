@@ -24,25 +24,25 @@ package nl.biopet.utils.biowdl
 package object multisample {
   case class Sample(name: String,
                     config: Map[String, Any] = Map(),
-                    libraries: Map[String, Library] = Map()) {
+                    libraries: List[Library] = List()) {
     def toMap: Map[String, Any] =
-      config + ("libraries" -> libraries.map {
-        case (libName, lib) => libName -> lib.toMap
+      Map("name" -> name) ++ config ++ Map("libraries" -> libraries.map {
+        case (library) => library.toMap
       })
   }
   case class Library(sample: String,
-                     library: String,
+                     name: String,
                      config: Map[String, Any] = Map(),
-                     readgroups: Map[String, Readgroup] = Map()) {
+                     readgroups: List[Readgroup] = List()) {
     def toMap: Map[String, Any] =
-      config + ("readgroups" -> readgroups.map {
-        case (rgName, rg) => rgName -> rg.toMap
+      Map("name" -> name) ++ config + ("readgroups" -> readgroups.map {
+        case (readgroup: Readgroup) => readgroup.toMap
       })
   }
   case class Readgroup(sample: String,
                        library: String,
-                       readgroup: String,
+                       name: String,
                        config: Map[String, Any] = Map()) {
-    def toMap: Map[String, Any] = config
+    def toMap: Map[String, Any] = Map("name" -> name) ++ config
   }
 }
