@@ -26,6 +26,7 @@ import java.io.File
 import nl.biopet.utils.biowdl.Pipeline
 import nl.biopet.utils.conversions.mapToYamlFile
 import nl.biopet.utils.conversions.mergeMaps
+import nl.biopet.tools.sampleconfig.cromwellarrays.CromwellArrays
 import org.testng.annotations.{DataProvider, Test}
 
 trait MultisamplePipeline extends Pipeline {
@@ -49,9 +50,14 @@ trait MultisamplePipeline extends Pipeline {
   def sampleConfigFile = new File(outputDir, "samples.yml")
 
   override def inputs: Map[String, Any] = {
-    mapToYamlFile(sampleConfig, sampleConfigFile)
-    super.inputs + (s"$startPipelineName.sampleConfigFiles" -> Array(
-      sampleConfigFile.getAbsolutePath))
+    val intermediateFile = File.createTempFile("samples", ".yml")
+    mapToYamlFile(sampleConfig, intermediateFile)
+    CromwellArrays.main(
+      Array("-i",
+            intermediateFile.getAbsolutePath,
+            "-o",
+            sampleConfigFile.getAbsolutePath))
+    super.inputs + (s"$startPipelineName.sampleConfigFile" -> sampleConfigFile.getAbsolutePath)
   }
 
   @DataProvider(name = "samples")
