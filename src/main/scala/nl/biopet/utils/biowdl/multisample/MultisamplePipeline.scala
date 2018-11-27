@@ -22,6 +22,7 @@
 package nl.biopet.utils.biowdl.multisample
 
 import java.io.File
+import java.util.NoSuchElementException
 
 import nl.biopet.utils.biowdl.Pipeline
 import nl.biopet.utils.conversions.mapToYamlFile
@@ -101,27 +102,51 @@ trait MultisamplePipeline extends Pipeline {
     }
   }
 
-  def addLibrary(current: Map[String, Sample],
+  def addLibrary(current: List[Sample],
                  sample: String,
                  library: String,
-                 config: Map[String, Any] = Map()): Map[String, Sample] = {
+                 config: Map[String, Any] = Map()): List[Sample] = {
     val withSample = addSample(current, sample)
-    val s = withSample(sample)
-    val lib = s.libraries.get(library) match {
-      case Some(l) => l.copy(config = mergeMaps(l.config, config))
-      case _       => Library(sample, library, config)
+    val addedSampleIndex: Int = withSample.indexWhere(_.name == sample) match {
+      case -1     => throw new NoSuchElementException
+      case x: Int => x
     }
-    withSample + (sample -> s.copy(libraries = s.libraries + (library -> lib)))
+    val lib =
+      current(addedSampleIndex).libraries.indexWhere(_.name == library) match {
+        case -1 => Library(sample, library, config)
+        case x: Int => {
+          val currentLib = current(addedSampleIndex).libraries(x)
+          currentLib.copy(config = mergeMaps(currentLib.config, config))
+        }
+      }
+    withSample.drop(addedSampleIndex) ++ List(
+      withSample(addedSampleIndex).copy(
+        libraries = withSample(addedSampleIndex).libraries ++ List(lib)))
   }
 
-  def addReadgroup(current: Map[String, Sample],
+  def addReadgroup(current: List[Sample],
                    sample: String,
                    library: String,
                    readgroup: String,
-                   config: Map[String, Any] = Map()): Map[String, Sample] = {
+                   config: Map[String, Any] = Map()): List[Sample]= {
     val withLibrary = addLibrary(current, sample, library)
-    val s = withLibrary(sample)
-    val l = s.libraries(library)
+    val sampleIndex = withLibrary.indexWhere(_.name == sample) match {
+      case -1 => throw NoSuchElementException
+      case x => x
+    }
+    val currentSample = withLibrary(sampleIndex)
+    val libIndex = currentSample.libraries.indexWhere(_.name == library)
+    val currentLib = currentSample.libraries(libIndex)
+    val newRgs: List[Readgroup] = currentLib.readgroups.indexWhere(_.name = readgroup) match {
+      case -1 => currentLib.readgroups ++ List(Readgroup(sample, library, readgroup, config))
+      case x: Int => {
+        val currentRg = currentLib.readgroups(x)
+        val modRg = currentRg.copy(config = mergeMaps(currentRg.config, config))
+        currentLib.readgroups.drop(x) ++ List(modRg)
+      }
+    }
+    val newLib = Library(name = library, sample = sample, config = currentLib.config, readgroups = newRgs)
+    withLibrary.drop(sampleIndex) ++ List(Sample(name = sample, config = currentSample.config, libraries = currentSample.libraries ++ ))
     val rg = l.readgroups.get(readgroup) match {
       case Some(r) => r.copy(config = mergeMaps(r.config, config))
       case _       => Readgroup(sample, library, readgroup, config)
