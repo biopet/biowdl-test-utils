@@ -57,7 +57,7 @@ trait MultisamplePipeline extends Pipeline {
             intermediateFile.getAbsolutePath,
             "-o",
             sampleConfigFile.getAbsolutePath))
-    super.inputs + (s"$startPipelineName.sampleConfigFiles" -> Array(
+    super.inputs + (s"$startPipelineName.sampleConfigFile" -> Array(
       sampleConfigFile.getAbsolutePath))
   }
 
