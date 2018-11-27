@@ -29,3 +29,4 @@ scalaVersion := "2.11.12"
 
 libraryDependencies += "com.github.biopet" %% "common-utils" % "0.8"
 libraryDependencies += "com.github.biopet" %% "test-utils" % "0.4"
+libraryDependencies += "com.github.biopet" %% "sampleconfig" % "0.3"
