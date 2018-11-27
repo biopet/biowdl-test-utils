@@ -50,9 +50,13 @@ trait MultisamplePipeline extends Pipeline {
   def sampleConfigFile = new File(outputDir, "samples.yml")
 
   override def inputs: Map[String, Any] = {
-    val intermediateFile= File.createTempFile("samples", ".yml")
+    val intermediateFile = File.createTempFile("samples", ".yml")
     mapToYamlFile(sampleConfig, intermediateFile)
-    CromwellArrays.main(Array("-i", intermediateFile.getAbsolutePath, "-o",sampleConfigFile.getAbsolutePath))
+    CromwellArrays.main(
+      Array("-i",
+            intermediateFile.getAbsolutePath,
+            "-o",
+            sampleConfigFile.getAbsolutePath))
     super.inputs + (s"$startPipelineName.sampleConfigFiles" -> Array(
       sampleConfigFile.getAbsolutePath))
   }
